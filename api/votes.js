@@ -30,6 +30,6 @@ export default async function handler(req, res) {
     }
   }
 
-  res.setHeader('cache-control', 'public, max-age=30');
+  res.setHeader('cache-control', 'no-store');
   return json(res, 200, out);
 }
