@@ -67,7 +67,8 @@ function parseMarkdown(src) {
 
   function flush() {
     if (current !== null) {
-      const cleaned = current.replace(/\s+$/, '');
+      // Trim leading/trailing whitespace but preserve intentional line breaks inside.
+      const cleaned = current.replace(/^[\s\n]+|[\s\n]+$/g, '');
       if (cleaned.length > 0) entries.push(cleaned);
     }
     current = null;

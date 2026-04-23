@@ -43,11 +43,10 @@ const archive = loadJson('toasts.json');
 const capstone = loadJson('capstone.json');
 const config = loadJson('config.json');
 
-// Bump archive threshold pre-launch once the real list is in.
 assert(Array.isArray(archive), 'archive is an array');
 assert(Array.isArray(capstone), 'capstone is an array');
-assert(archive && archive.length >= 5, `archive.length >= 5 (got ${archive?.length})`);
-assert(capstone && capstone.length >= 3, `capstone.length >= 3 (got ${capstone?.length})`);
+assert(archive && archive.length >= 50, `archive.length >= 50 (got ${archive?.length})`);
+assert(capstone && capstone.length >= 25, `capstone.length >= 25 (got ${capstone?.length})`);
 
 function checkNoHeadersOrEmpties(arr, name) {
   if (!arr) return;
