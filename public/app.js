@@ -80,7 +80,17 @@ function utcDateKey() {
 function renderFooter() {
   const poured = state.globalPourCount == null ? '…' : state.globalPourCount.toLocaleString();
   const visitor = state.visitorNumber == null ? '…' : state.visitorNumber.toLocaleString();
-  $('#foot-visitor').textContent = `visitor #${visitor} · ${poured} buzzed`;
+  const voted = totalVotes().toLocaleString();
+  $('#foot-visitor').textContent = `visitor #${visitor} · ${poured} buzzed · ${voted} voted`;
+}
+
+function totalVotes() {
+  let n = 0;
+  for (const idx in state.votes) {
+    const v = state.votes[idx];
+    n += (Number(v.up) || 0) + (Number(v.down) || 0);
+  }
+  return n;
 }
 
 function renderCounters() {
@@ -255,9 +265,9 @@ async function fetchVotesBulk() {
     const res = await fetch('/api/votes', { cache: 'no-store' });
     if (!res.ok) return;
     const data = await res.json();
-    // Server returns { archive: {...}, ...} — we only use archive now.
     if (data && typeof data.archive === 'object') state.votes = data.archive;
   } catch {}
+  renderFooter();
 }
 
 async function sendVote(idx, dir) {
@@ -292,6 +302,7 @@ async function onVote(dir) {
     state.votes[idx] = { up: result.up, down: result.down };
     updateVoteUI();
   }
+  renderFooter();   // update "N voted"
 }
 
 // ============================================================
@@ -464,6 +475,7 @@ function exitOverlay() {
   $('#marquee').hidden = true;
   $('#away').hidden = true;
   $('#help').hidden = true;
+  $('#top').hidden = true;
   state.view = 'main';
   const h = location.hash;
   if (h === '#yell' || h === '#cli' || h === '#marquee' || h === '#away') {
@@ -474,6 +486,51 @@ function exitOverlay() {
 function enterHelp() {
   $('#help').hidden = false;
   state.view = 'help';
+}
+
+// Compute ranked top 10 from state.archive + state.votes (net = up − down).
+function computeTopRanked(limit = 10) {
+  const rows = [];
+  for (let i = 0; i < state.archive.length; i++) {
+    const v = state.votes[i] || { up: 0, down: 0 };
+    const up = Number(v.up) || 0;
+    const down = Number(v.down) || 0;
+    if (!up && !down) continue;
+    rows.push({ idx: i, text: state.archive[i], up, down, net: up - down });
+  }
+  rows.sort((a, b) => (b.net - a.net) || (b.up - a.up) || (a.idx - b.idx));
+  return rows.slice(0, limit);
+}
+
+function enterTop() {
+  play('doo');
+  const list = $('#top-list');
+  const empty = $('#top-empty');
+  list.innerHTML = '';
+  const ranked = computeTopRanked(10);
+  if (!ranked.length) {
+    empty.hidden = false;
+  } else {
+    empty.hidden = true;
+    ranked.forEach((r, i) => {
+      const li = document.createElement('li');
+      const rank = document.createElement('span'); rank.className = 'top-rank'; rank.textContent = `#${i + 1}`;
+      const score = document.createElement('span'); score.className = 'top-score';
+      score.textContent = `${r.net >= 0 ? '+' : ''}${r.net}`;
+      if (r.net >= 3) score.classList.add('is-hot');
+      const text = document.createElement('span'); text.className = 'top-text'; text.textContent = r.text;
+      li.append(rank, score, text);
+      // Click a row → jump to that toast in the main view
+      li.addEventListener('click', () => {
+        exitOverlay();
+        state.usedIndices.add(r.idx);
+        renderToast(r.idx);
+      });
+      list.appendChild(li);
+    });
+  }
+  $('#top').hidden = false;
+  state.view = 'top';
 }
 
 function setupPourHold() {
@@ -529,7 +586,8 @@ function cliExec(raw) {
     printLine('  pour [N]      random toast(s)');
     printLine('  show INDEX    show toast by index');
     printLine('  search Q      list matches');
-    printLine('  count         total');
+    printLine('  count         total toasts + votes');
+    printLine('  top           top 10 by net vote score');
     printLine('  exit          back (or press Esc)');
     return;
   }
@@ -559,7 +617,18 @@ function cliExec(raw) {
     if (hits.length > 20) printLine(`  …and ${hits.length - 20} more`);
     return;
   }
-  if (cmd === 'count') { printLine(`  ${state.archive.length} toasts`); return; }
+  if (cmd === 'count') { printLine(`  ${state.archive.length} toasts · ${totalVotes()} votes`); return; }
+  if (cmd === 'top') {
+    const ranked = computeTopRanked(10);
+    if (!ranked.length) { printLine('  no votes yet'); return; }
+    printLine('  top 10 by net vote score:');
+    ranked.forEach((r, i) => {
+      const sign = r.net >= 0 ? `+${r.net}` : String(r.net);
+      const first = r.text.split('\n')[0].slice(0, 48);
+      printLine(`  #${String(i + 1).padStart(2)} ${sign.padStart(4)} (${r.up}↑/${r.down}↓) ${first}`);
+    });
+    return;
+  }
   if (cmd === 'exit' || cmd === 'quit') { exitOverlay(); return; }
   printLine(`  unknown command: ${cmd}. try 'help'.`, 'err');
 }
@@ -644,7 +713,10 @@ function bindUI() {
   $('#btn-down').addEventListener('click', (e) => { floatEmoji(e.currentTarget, '👎'); onVote('down'); });
 
   // Flanking AIM buttons
-  $('#btn-smiley').addEventListener('click', dropEmoticon);
+  $('#btn-top').addEventListener('click', enterTop);
+  $('#top-ok').addEventListener('click', exitOverlay);
+  $('#top-close-x').addEventListener('click', exitOverlay);
+  $('#top').addEventListener('click', (e) => { if (e.target === $('#top')) exitOverlay(); });
   $('#btn-warn').addEventListener('click', bumpWarn);
   $('#btn-jukebox').addEventListener('click', () => {
     play('jukebox');
@@ -704,7 +776,7 @@ function bindUI() {
       if (e.key === '+' || e.key === '=') { marqueeDuration = Math.max(30, marqueeDuration - 20); $('#marquee').style.setProperty('--marquee-duration', marqueeDuration + 's'); }
       else if (e.key === '-' || e.key === '_') { marqueeDuration += 20; $('#marquee').style.setProperty('--marquee-duration', marqueeDuration + 's'); }
       else if (e.key === 'Escape') exitOverlay();
-    } else if (state.view === 'yell' || state.view === 'away' || state.view === 'cli' || state.view === 'help') {
+    } else if (state.view === 'yell' || state.view === 'away' || state.view === 'cli' || state.view === 'help' || state.view === 'top') {
       if (e.key === 'Escape') exitOverlay();
     }
   });

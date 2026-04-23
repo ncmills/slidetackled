@@ -64,7 +64,7 @@
     <!-- BUZZ (primary CTA) flanked by: jukebox | smiley | BUZZ | warn | nudge -->
     <div class="pour-wrap">
       <button class="aim-btn aim-btn-icon btn-flank" id="btn-jukebox" title="jukebox" aria-label="jukebox">&#127926;</button>
-      <button class="aim-btn aim-btn-icon btn-flank" id="btn-smiley" title="insert a classic emoticon" aria-label="emoticon">&#128578;</button>
+      <button class="aim-btn aim-btn-icon btn-flank" id="btn-top" title="top-rated toasts" aria-label="top rated">&#127942;</button>
       <button class="aim-btn aim-btn-big" id="pour">BUZZ</button>
       <button class="aim-btn aim-btn-icon btn-flank" id="btn-warn" title="warn" aria-label="warn">&#9888;&#65039;</button>
       <button class="aim-btn aim-btn-icon btn-flank" id="btn-nudge" title="nudge" aria-label="nudge">&#128276;</button>
@@ -89,6 +89,26 @@
         <button class="status-glyph" id="btn-help" title="help" aria-label="help">?</button>
         <button class="aim-btn aim-btn-icon" id="btn-mute" title="toggle sound" aria-label="toggle sound">&#128263;</button>
       </span>
+    </div>
+  </div>
+
+  <!-- Top-rated overlay (opens via 🏆 button beside BUZZ) -->
+  <div id="top" class="overlay help" hidden>
+    <div class="aim-window help-window" role="dialog" aria-labelledby="top-title">
+      <div class="titlebar">
+        <span class="tb-glyph" aria-hidden="true"><img src="/brand/bubble.png" alt=""></span>
+        <span class="tb-title" id="top-title">slidetackled — Top Voted</span>
+        <span class="tb-controls">
+          <button class="tb-btn tb-close" id="top-close-x" aria-label="close" title="close">&times;</button>
+        </span>
+      </div>
+      <div class="help-body">
+        <ol class="top-list" id="top-list"></ol>
+        <p class="top-empty" id="top-empty" hidden>no votes yet. BUZZ and tap 👍 / 👎 to start shaping the list.</p>
+      </div>
+      <div class="pour-wrap help-foot">
+        <button class="aim-btn" id="top-ok">OK</button>
+      </div>
     </div>
   </div>
 
@@ -124,7 +144,8 @@ HIDDEN ROUTES
 OTHER
   📌 tap          copy toast text
   📌 hold         copy shareable link
-  🎵 / 🙂 / ⚠ / 🔔   flanking BUZZ, each does something
+  🎵 🏆 ⚠ 🔔      flanking BUZZ, each does something
+  🏆              top 10 most-liked (also: /cli → "top")
   hold BUZZ 2s    same as pressing y
   × _ □           try them
 </pre>
