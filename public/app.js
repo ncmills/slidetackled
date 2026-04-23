@@ -643,9 +643,25 @@ function bindUI() {
   $('#btn-up').addEventListener('click', (e) => { floatEmoji(e.currentTarget, '👍'); onVote('up'); });
   $('#btn-down').addEventListener('click', (e) => { floatEmoji(e.currentTarget, '👎'); onVote('down'); });
 
-  // New AIM toolbar buttons
+  // Flanking AIM buttons
   $('#btn-smiley').addEventListener('click', dropEmoticon);
   $('#btn-warn').addEventListener('click', bumpWarn);
+  $('#btn-jukebox').addEventListener('click', () => {
+    play('jukebox');
+    const tb = document.querySelector('#main-window .titlebar');
+    tb.classList.remove('jukebox');
+    void tb.offsetWidth;
+    tb.classList.add('jukebox');
+    setTimeout(() => tb.classList.remove('jukebox'), 950);
+  });
+  $('#btn-nudge').addEventListener('click', () => {
+    play('nudge');
+    const win = $('#main-window');
+    win.classList.remove('nudge', 'shake');
+    void win.offsetWidth;
+    win.classList.add('nudge');
+    setTimeout(() => win.classList.remove('nudge'), 950);
+  });
 
   $('#btn-mute').addEventListener('click', () => {
     state.muted = !state.muted;

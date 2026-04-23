@@ -233,19 +233,13 @@ button, input, textarea { font-family: inherit; font-size: inherit; color: inher
 
 .aim-btn-icon { min-height: 24px; padding: 4px 8px; font-size: 13px; }
 
-/* Toolbar row (smiley + warn) */
-.toolbar-row {
-  margin: 0 3px 3px;
-  padding: 4px 6px;
-  background: var(--aim-gray);
-  border: 2px solid;
-  border-color: #808080 #ffffff #ffffff #808080;  /* inset */
-  display: flex;
-  gap: 4px;
-  align-items: center;
+/* Flanking buttons (smiley + warn beside BUZZ) */
+.btn-flank {
+  font-size: 18px;
+  min-height: 40px;
+  padding: 8px 12px;
+  line-height: 1;
 }
-.toolbar-row .aim-btn-icon { min-height: 26px; padding: 3px 8px; font-size: 14px; }
-.toolbar-spacer { flex: 1; }
 
 /* Button FX --------------------------------------------------------- */
 
@@ -354,7 +348,7 @@ button, input, textarea { font-family: inherit; font-size: inherit; color: inher
 }
 .warn-label { font-size: 9px; color: var(--ink-mute); margin-right: 2px; }
 
-/* Pour row */
+/* Pour row — smiley | BUZZ | warn, centered */
 .pour-wrap {
   margin: 4px 3px;
   padding: 10px 8px 12px;
@@ -363,6 +357,12 @@ button, input, textarea { font-family: inherit; font-size: inherit; color: inher
   border-color: #ffffff #404040 #404040 #ffffff;
   display: flex;
   justify-content: center;
+  align-items: center;
+  gap: 12px;
+}
+@media (max-width: 360px) {
+  .pour-wrap { gap: 8px; }
+  .btn-flank { min-height: 36px; padding: 6px 10px; font-size: 16px; }
 }
 
 /* Wordmark strip — small branded flourish below the POUR panel */
@@ -441,6 +441,33 @@ button, input, textarea { font-family: inherit; font-size: inherit; color: inher
   75%         { transform: translate(-1px, 1px); }
 }
 .aim-window.shake { animation: window-shake 0.45s ease; }
+
+/* Nudge — aggressive shake (more amplitude + duration than normal) */
+@keyframes window-nudge {
+  0%, 100% { transform: translate(0, 0) rotate(0); }
+  5%       { transform: translate(-10px, -4px) rotate(-0.6deg); }
+  10%      { transform: translate(10px, 4px) rotate(0.6deg); }
+  15%      { transform: translate(-10px, 4px) rotate(-0.4deg); }
+  20%      { transform: translate(10px, -4px) rotate(0.4deg); }
+  25%      { transform: translate(-8px, -3px) rotate(-0.3deg); }
+  30%      { transform: translate(8px, 3px) rotate(0.3deg); }
+  40%      { transform: translate(-6px, 2px); }
+  50%      { transform: translate(6px, -2px); }
+  60%      { transform: translate(-4px, 1px); }
+  70%      { transform: translate(4px, -1px); }
+  85%      { transform: translate(-2px, 0); }
+}
+.aim-window.nudge { animation: window-nudge 0.9s ease; }
+
+/* Jukebox — title bar pulses through a rainbow-ish hue while sound plays */
+@keyframes titlebar-pulse {
+  0%   { filter: hue-rotate(0deg) saturate(1); }
+  25%  { filter: hue-rotate(60deg) saturate(1.4); }
+  50%  { filter: hue-rotate(180deg) saturate(1.4); }
+  75%  { filter: hue-rotate(300deg) saturate(1.4); }
+  100% { filter: hue-rotate(360deg) saturate(1); }
+}
+.titlebar.jukebox { animation: titlebar-pulse 900ms ease; }
 
 /* Minimize: slide down to the bottom, pause, spring back up */
 @keyframes window-minimize {

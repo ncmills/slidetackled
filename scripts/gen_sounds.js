@@ -164,6 +164,37 @@ function makeDoo(duration = 0.24) {
   });
 }
 
+function makeNudge(duration = 0.32) {
+  // Heavy game-show-buzzer thud: low square wave with sharp attack, fat sustain, fast decay
+  return synth(duration, (t) => {
+    const f = 160 + 20 * Math.sin(2 * Math.PI * 8 * t);  // slight wobble
+    const sq = Math.sign(Math.sin(2 * Math.PI * f * t));
+    const sub = Math.sin(2 * Math.PI * 80 * t) * 0.4;    // sub-bass
+    let env;
+    if (t < 0.005) env = t / 0.005;
+    else if (t > duration - 0.08) env = (duration - t) / 0.08;
+    else env = Math.exp(-t * 2.5);
+    return (sq * 0.6 + sub) * env * 0.22;
+  });
+}
+
+function makeJukebox(duration = 0.9) {
+  // Short 8-bit-style ascending pentatonic flourish, chiptune vibe
+  // Notes: C4, E4, G4, B4, C5, E5, G5
+  const NOTES = [261.63, 329.63, 392.00, 493.88, 523.25, 659.25, 783.99];
+  const NOTE_LEN = duration / NOTES.length;
+  return synth(duration, (t) => {
+    const i = Math.min(NOTES.length - 1, Math.floor(t / NOTE_LEN));
+    const lt = t - i * NOTE_LEN;
+    const f = NOTES[i];
+    // Square wave (chiptune signature)
+    const s = Math.sign(Math.sin(2 * Math.PI * f * t));
+    // Per-note envelope
+    const env = Math.min(1, lt / 0.005) * Math.exp(-lt * 4);
+    return s * env * 0.14;
+  });
+}
+
 renderOne('clink', makeClink());
 renderOne('buzz',  makeBuzz());
 renderOne('vote',  makeVote());
@@ -171,4 +202,6 @@ renderOne('open',  makeOpen());
 renderOne('click', makeClick());
 renderOne('warn',  makeWarn());
 renderOne('doo',   makeDoo());
+renderOne('nudge', makeNudge());
+renderOne('jukebox', makeJukebox());
 console.log('[gen_sounds] done');

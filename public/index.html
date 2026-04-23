@@ -61,16 +61,13 @@
       </div>
     </div>
 
-    <!-- Mini AIM-style toolbar: smiley + warn (decorative Easter eggs) -->
-    <div class="toolbar-row">
-      <button class="aim-btn aim-btn-icon" id="btn-smiley" title="insert a classic emoticon">&#128578;</button>
-      <button class="aim-btn aim-btn-icon" id="btn-warn" title="warn">&#9888;&#65039;</button>
-      <span class="toolbar-spacer"></span>
-    </div>
-
-    <!-- BUZZ (primary CTA) -->
+    <!-- BUZZ (primary CTA) flanked by: jukebox | smiley | BUZZ | warn | nudge -->
     <div class="pour-wrap">
+      <button class="aim-btn aim-btn-icon btn-flank" id="btn-jukebox" title="jukebox" aria-label="jukebox">&#127926;</button>
+      <button class="aim-btn aim-btn-icon btn-flank" id="btn-smiley" title="insert a classic emoticon" aria-label="emoticon">&#128578;</button>
       <button class="aim-btn aim-btn-big" id="pour">BUZZ</button>
+      <button class="aim-btn aim-btn-icon btn-flank" id="btn-warn" title="warn" aria-label="warn">&#9888;&#65039;</button>
+      <button class="aim-btn aim-btn-icon btn-flank" id="btn-nudge" title="nudge" aria-label="nudge">&#128276;</button>
     </div>
 
     <!-- Wordmark strip — small branded footer mark inside the window -->
@@ -127,8 +124,7 @@ HIDDEN ROUTES
 OTHER
   📌 tap          copy toast text
   📌 hold         copy shareable link
-  🙂              drop a classic emoticon
-  ⚠               bump the warn meter
+  🎵 / 🙂 / ⚠ / 🔔   flanking BUZZ, each does something
   hold BUZZ 2s    same as pressing y
   × _ □           try them
 </pre>
