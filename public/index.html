@@ -3,10 +3,10 @@
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
-  <meta name="description" content="a toast generator. press a button, raise a glass.">
+  <meta name="description" content="a toast generator. press POUR. read it aloud.">
   <meta name="robots" content="index,follow">
   <meta property="og:title" content="SLIDE TACKLED">
-  <meta property="og:description" content="a toast generator">
+  <meta property="og:description" content="a toast generator. press POUR.">
   <meta property="og:type" content="website">
   <meta property="og:url" content="https://slidetackled.com">
   <meta property="og:image" content="https://slidetackled.com/og.png">
@@ -14,61 +14,111 @@
   <meta property="og:image:height" content="630">
   <meta name="twitter:card" content="summary_large_image">
   <meta name="twitter:title" content="SLIDE TACKLED">
-  <meta name="twitter:description" content="a toast generator">
+  <meta name="twitter:description" content="a toast generator. press POUR.">
   <meta name="twitter:image" content="https://slidetackled.com/og.png">
-  <title>SLIDE TACKLED — a toast generator</title>
+  <title>SLIDE TACKLED — Instant Message</title>
   <link rel="icon" href="/favicon.ico" sizes="any">
   <link rel="stylesheet" href="/styles.css">
 </head>
 <body>
-  <main id="main" class="view view-main">
-    <header class="site-head">
-      <h1 class="title">SLIDE TACKLED</h1>
-      <p class="tagline">a toast generator</p>
-    </header>
+  <!-- Reusable inline SVG: AIM running-man silhouette. Uses currentColor so it inherits. -->
+  <svg style="display:none" xmlns="http://www.w3.org/2000/svg">
+    <symbol id="runner" viewBox="0 0 20 20">
+      <!-- head -->
+      <circle cx="11" cy="3.3" r="1.6" fill="currentColor"/>
+      <!-- torso -->
+      <path d="M10 5 L9 12" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" fill="none"/>
+      <!-- front arm (forward) -->
+      <path d="M10 7 L14.5 9" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" fill="none"/>
+      <!-- back arm -->
+      <path d="M10 7 L6.5 8" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" fill="none"/>
+      <!-- front leg -->
+      <path d="M9 12 L13 17" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" fill="none"/>
+      <!-- back leg -->
+      <path d="M9 12 L5 15" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" fill="none"/>
+    </symbol>
+  </svg>
 
-    <!-- Rotating capstone ticker -->
-    <div class="ticker" id="ticker" aria-live="polite">
-      <span class="ticker-label">&#9733; from the capstone:</span>
-      <span class="ticker-body" id="ticker-body"></span>
+  <!-- Main IM window ------------------------------------------------- -->
+  <div class="aim-window" id="main-window">
+
+    <!-- Title bar: running-man + window title + min/max/close -->
+    <div class="titlebar">
+      <span class="tb-runner" aria-hidden="true"><svg><use href="#runner"/></svg></span>
+      <span class="tb-title">slidetackled — Instant Message</span>
+      <span class="tb-controls">
+        <button class="tb-btn" id="tb-min" aria-label="minimize" title="minimize">_</button>
+        <button class="tb-btn" id="tb-max" aria-label="maximize" title="maximize">&#9633;</button>
+        <button class="tb-btn tb-close" id="tb-close" aria-label="close" title="close">&times;</button>
+      </span>
     </div>
 
-    <section class="stage" aria-live="polite">
-      <p class="toast" id="toast"></p>
-      <div class="toast-actions" id="toast-actions" hidden>
-        <button class="vote-btn" id="btn-up" title="upvote" aria-label="upvote">
-          <span class="vote-ico">&#128077;</span><span class="vote-count" id="vote-up-count">0</span>
-        </button>
-        <button class="vote-btn" id="btn-down" title="downvote" aria-label="downvote">
-          <span class="vote-ico">&#128078;</span><span class="vote-count" id="vote-down-count">0</span>
-        </button>
-        <button class="icon-btn" id="btn-pin" title="tap to copy, hold to copy link" aria-label="copy toast">&#128204;</button>
+    <!-- FIX 2: capstone elevated. Buddy info card styled as pinned AIM buddy block. -->
+    <!--        Sunken inset bevel, yellow running-man icon, name + status + rotating quote, -->
+    <!--        with clear hierarchy (label muted small uppercase, quote prominent italic).  -->
+    <div class="buddy-card" id="ticker" aria-live="polite">
+      <div class="buddy-icon" aria-hidden="true">
+        <svg style="color:#000"><use href="#runner"/></svg>
+      </div>
+      <div class="buddy-meta">
+        <div class="buddy-name">the capstone</div>
+        <div class="buddy-status">originals. rotating.</div>
+        <span class="buddy-label">from the capstone</span>
+        <div class="buddy-quote" id="ticker-body"></div>
+      </div>
+    </div>
+
+    <!-- FIX 1: one-line explainer in AIM voice.                                   -->
+    <!--        Three options considered:                                           -->
+    <!--          (A) "push POUR. get a toast."                                     -->
+    <!--          (B) "press POUR. raise your glass. read it aloud."                -->
+    <!--          (C) "toasts on tap. POUR to pour one."                            -->
+    <!--        Picked (B). Dry, lowercase, gives the user a three-step script.    -->
+    <div class="explainer">press POUR. raise your glass. read it aloud.</div>
+
+    <!-- Message area — where the generated toast lands -->
+    <div class="msg-area" aria-live="polite">
+      <div class="msg-head">
+        <span>slidetackled:</span>
+        <span class="msg-ts" id="msg-ts"></span>
+      </div>
+      <p class="msg-body is-empty" id="toast">press POUR to pour a toast.</p>
+      <div class="msg-typing" id="typing" hidden>
+        buddy is typing<span class="dot"></span><span class="dot"></span><span class="dot"></span>
+      </div>
+      <div class="msg-actions" id="toast-actions" hidden>
+        <button class="aim-btn" id="btn-up" title="upvote">&#128077; <span id="vote-up-count">0</span></button>
+        <button class="aim-btn" id="btn-down" title="downvote">&#128078; <span id="vote-down-count">0</span></button>
+        <button class="aim-btn aim-btn-icon" id="btn-pin" title="tap to copy, hold to copy link">&#128204;</button>
         <span class="flash" id="flash" aria-live="polite"></span>
       </div>
-    </section>
+    </div>
 
+    <!-- POUR -->
     <div class="pour-wrap">
-      <button class="pour" id="pour">POUR</button>
+      <button class="aim-btn aim-btn-big" id="pour">POUR</button>
     </div>
 
-    <div class="counters">
-      <div class="counter-main" id="counter-main">&nbsp;</div>
-      <div class="counter-session" id="counter-session">&nbsp;</div>
+    <!-- Status bar -->
+    <div class="status-bar">
+      <span class="status-left">
+        <span class="status-cell" id="foot-visitor">visitor #… · … poured</span>
+      </span>
+      <span class="status-right">
+        <span class="status-cell" id="counter-main"></span>
+        <span class="status-cell" id="counter-session">you: 0 poured today</span>
+        <button class="aim-btn aim-btn-icon" id="btn-mute" title="toggle sound" aria-label="toggle sound">&#128263;</button>
+      </span>
     </div>
+  </div>
 
-    <footer class="foot">
-      <span class="foot-left" id="foot-visitor">&nbsp;</span>
-      <span class="foot-mute"><button class="icon-btn" id="btn-mute" title="toggle sound" aria-label="toggle sound">&#128263;</button></span>
-    </footer>
-  </main>
-
-  <!-- Yell Mode overlay -->
+  <!-- Yell Mode overlay (press y / hold POUR 2s) -->
   <div id="yell" class="overlay yell" hidden>
     <div class="yell-text" id="yell-text"></div>
     <div class="yell-hint" id="yell-hint">tap to exit</div>
   </div>
 
-  <!-- CLI overlay -->
+  <!-- CLI overlay (~) -->
   <div id="cli" class="overlay cli" hidden>
     <div class="cli-buffer" id="cli-buffer"></div>
     <div class="cli-input-row">
@@ -77,21 +127,24 @@
     </div>
   </div>
 
-  <!-- Marquee overlay -->
+  <!-- Marquee (/marquee) -->
   <div id="marquee" class="overlay marquee" hidden>
     <div class="marquee-track" id="marquee-track"></div>
   </div>
 
-  <!-- Away overlay -->
+  <!-- Away (/away) — its own mini AIM window -->
   <div id="away" class="overlay away" hidden>
     <div class="aim-window">
-      <div class="aim-titlebar">
-        <span class="aim-title">slidetackled — Instant Message</span>
-        <span class="aim-x">X</span>
+      <div class="titlebar">
+        <span class="tb-runner"><svg><use href="#runner"/></svg></span>
+        <span class="tb-title">slidetackled — Instant Message</span>
+        <span class="tb-controls">
+          <button class="tb-btn" aria-label="close">&times;</button>
+        </span>
       </div>
-      <div class="aim-body">
-        <div class="aim-auto">Auto-response from <b>slidetackled</b>:</div>
-        <div class="aim-msg" id="aim-msg"></div>
+      <div class="away-body">
+        <div class="away-auto">Auto-response from <b>slidetackled</b>:</div>
+        <div id="aim-msg"></div>
       </div>
     </div>
   </div>

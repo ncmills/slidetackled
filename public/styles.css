@@ -1,207 +1,338 @@
-/* slidetackled.com — AIM / early-2000s aesthetic, simple version */
+/* slidetackled.com — full AIM commitment. Win98/XP-era Instant Message window. */
+/* FIX 3: full AIM — navy gradient title bar, Tahoma chrome + Helvetica body,
+   #FFDB4C running-man accent, #ECE9D8 chrome gray, chunky outset→inset beveled buttons,
+   window shake on new message, "Buddy is typing…" pre-toast state. */
 
 :root {
-  --bg: #f5f1e8;
-  --ink: #1a1a1a;
-  --ink-mute: #888;
-  --aim-white: #ffffff;
-  --cli-green: #c8ffc8;
-  --cli-black: #000000;
-  --font: "Courier New", "Lucida Console", "Courier", monospace;
+  --aim-navy-a: #0a246a;
+  --aim-navy-b: #2a6bd8;     /* gradient end — brighter so the title bar reads "alive" */
+  --aim-gray:   #ECE9D8;     /* Win98/XP classic chrome gray */
+  --aim-gray-dark: #808080;
+  --aim-gray-darker: #404040;
+  --aim-gray-light: #ffffff;
+  --aim-yellow: #FFDB4C;
+  --aim-yellow-dk: #d9b221;
+  --aim-red: #c43c35;        /* close X */
+  --msg-bg: #ffffff;
+  --ink: #000000;
+  --ink-mute: #5a5a5a;
+  --font-chrome: Tahoma, "MS Sans Serif", Geneva, Verdana, sans-serif;
+  --font-body: "Helvetica Neue", Helvetica, Arial, sans-serif;
 }
 
 * { box-sizing: border-box; }
 html, body { height: 100%; }
-body {
-  margin: 0;
-  background: var(--bg);
-  color: var(--ink);
-  font-family: var(--font);
-  font-size: 15px;
-  line-height: 1.5;
-  -webkit-font-smoothing: none;
-  text-rendering: optimizeLegibility;
-}
-
-button, input, textarea {
-  font-family: inherit;
-  font-size: inherit;
-  color: inherit;
-}
-
 [hidden] { display: none !important; }
 
-/* Layout ------------------------------------------------------------ */
-
-.view-main {
-  max-width: 720px;
-  margin: 0 auto;
-  padding: 32px 20px 24px;
-  display: flex;
-  flex-direction: column;
+body {
+  margin: 0;
+  background: #3A6EA5;       /* classic Windows desktop blue */
+  font-family: var(--font-chrome);
+  font-size: 11px;
+  color: var(--ink);
   min-height: 100vh;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 20px 12px;
+  -webkit-font-smoothing: none;
+  font-smooth: never;
 }
 
-.site-head { text-align: center; margin-bottom: 14px; }
-.title {
-  font-size: 22px;
-  letter-spacing: 4px;
-  margin: 0 0 4px;
+button, input, textarea { font-family: inherit; font-size: inherit; color: inherit; }
+
+/* Beveled borders — AIM / Win9x canonical. Two-tone 2px. */
+.bevel-out { border-style: solid; border-width: 2px; border-color: #ffffff #404040 #404040 #ffffff; }
+.bevel-in  { border-style: solid; border-width: 2px; border-color: #808080 #ffffff #ffffff #808080; }
+
+/* ============================================================ */
+/* Window                                                        */
+/* ============================================================ */
+
+.aim-window {
+  background: var(--aim-gray);
+  border: 2px solid;
+  border-color: #ffffff #404040 #404040 #ffffff;   /* outset */
+  box-shadow: 2px 2px 0 #000;                       /* chunky, not modern */
+  width: 100%;
+  max-width: 460px;
+  padding: 2px;
+  display: flex;
+  flex-direction: column;
+}
+
+/* Title bar */
+.titlebar {
+  background: linear-gradient(to right, var(--aim-navy-a) 0%, var(--aim-navy-b) 100%);
+  color: #fff;
+  font-family: var(--font-chrome);
   font-weight: bold;
-  text-transform: uppercase;
-}
-.tagline {
-  font-size: 13px;
-  color: var(--ink-mute);
-  margin: 0;
-  letter-spacing: 0.5px;
-}
-
-/* Ticker (rotating capstone toasts) --------------------------------- */
-
-.ticker {
-  font-size: 12px;
-  color: var(--ink-mute);
-  font-style: italic;
-  text-align: center;
-  margin: 0 auto 20px;
-  max-width: 560px;
-  padding: 6px 10px;
-  border-top: 1px dashed var(--ink-mute);
-  border-bottom: 1px dashed var(--ink-mute);
-  min-height: 38px;
+  font-size: 11px;
   display: flex;
-  flex-direction: column;
+  align-items: center;
+  padding: 2px 2px 2px 4px;
+  gap: 4px;
+  height: 22px;
+  user-select: none;
+}
+.tb-runner {
+  width: 18px; height: 18px;
+  background: var(--aim-yellow);
+  border: 1px solid #000;
+  display: inline-flex;
   align-items: center;
   justify-content: center;
-  gap: 2px;
-  transition: opacity 400ms ease;
+  flex: 0 0 auto;
+  padding: 1px;
 }
-.ticker-label { font-size: 11px; color: var(--ink-mute); letter-spacing: 0.4px; }
-.ticker-body { white-space: pre-line; color: var(--ink); line-height: 1.45; }
-
-/* Stage ------------------------------------------------------------- */
-
-.stage {
-  flex: 1 0 auto;
-  display: flex;
-  flex-direction: column;
-  justify-content: center;
-  align-items: center;
-  padding: 24px 0;
-  min-height: 180px;
-}
-.toast {
-  max-width: 640px;
-  margin: 0;
-  padding: 0 8px;
-  font-size: 19px;
-  line-height: 1.55;
-  text-align: center;
-  white-space: pre-line;
-  transition: opacity 150ms ease;
-}
-.toast.is-empty { color: var(--ink-mute); font-style: italic; }
-
-.toast-actions {
-  margin-top: 18px;
-  display: flex;
-  gap: 12px;
-  align-items: center;
-  flex-wrap: wrap;
-  justify-content: center;
-  min-height: 26px;
-}
-.icon-btn {
-  background: none;
-  border: 0;
-  padding: 8px 10px;
+.tb-runner svg { width: 100%; height: 100%; display: block; }
+.tb-title { flex: 1; letter-spacing: 0.2px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.tb-controls { display: flex; gap: 2px; flex: 0 0 auto; }
+.tb-btn {
+  background: var(--aim-gray);
+  border: 1px solid;
+  border-color: #ffffff #000 #000 #ffffff;
+  width: 18px; height: 16px;
+  font-family: var(--font-chrome);
+  font-weight: bold;
+  font-size: 10px;
+  padding: 0;
+  line-height: 14px;
+  color: #000;
   cursor: pointer;
-  font-size: 18px;
-  line-height: 1;
-  min-width: 40px;
-  min-height: 40px;
   display: inline-flex;
   align-items: center;
   justify-content: center;
 }
-.icon-btn:hover { filter: invert(0.08); }
-.icon-btn:focus { outline: 1px dotted var(--ink); outline-offset: 2px; }
+.tb-btn:active { border-color: #808080 #ffffff #ffffff #808080; }
+.tb-btn.tb-close { background: var(--aim-red); color: #fff; font-weight: bold; }
 
-.flash {
+/* ============================================================ */
+/* Buddy card — FIX 2 elevated capstone block                    */
+/* ============================================================ */
+
+.buddy-card {
+  margin: 4px 3px 3px;
+  padding: 8px 10px;
+  background: var(--msg-bg);
+  border: 2px solid;
+  border-color: #808080 #ffffff #ffffff #808080;     /* sunken inset */
+  display: flex;
+  gap: 10px;
+  align-items: flex-start;
+}
+.buddy-icon {
+  width: 40px; height: 40px;
+  background: var(--aim-yellow);
+  border: 2px solid #000;
+  display: flex; align-items: center; justify-content: center;
+  flex: 0 0 auto;
+  padding: 3px;
+}
+.buddy-icon svg { width: 100%; height: 100%; display: block; }
+.buddy-meta { flex: 1; min-width: 0; }
+.buddy-name { font-family: var(--font-chrome); font-weight: bold; font-size: 13px; color: var(--ink); }
+.buddy-status {
+  font-family: var(--font-chrome);
+  font-size: 10px;
+  color: var(--ink-mute);
+  margin-top: 1px;
+  letter-spacing: 0.1px;
+}
+.buddy-quote {
+  font-family: var(--font-body);
+  font-style: italic;
+  font-size: 13px;
+  line-height: 1.4;
+  color: var(--ink);
+  margin-top: 6px;
+  white-space: pre-line;
+  transition: opacity 300ms ease;
+  min-height: 1.4em;
+}
+.buddy-label {
+  font-family: var(--font-chrome);
+  font-size: 9px;
+  text-transform: uppercase;
+  letter-spacing: 1px;
+  color: var(--ink-mute);
+  display: block;
+  margin-top: 4px;
+}
+
+/* ============================================================ */
+/* Explainer strip — FIX 1                                       */
+/* ============================================================ */
+
+.explainer {
+  margin: 0 3px 3px;
+  padding: 4px 10px;
+  font-family: var(--font-chrome);
+  font-size: 11px;
+  color: #000;
+  background: var(--aim-yellow);
+  border: 1px solid #000;
+  text-align: center;
+  letter-spacing: 0.1px;
+}
+
+/* ============================================================ */
+/* Message area (the "Instant Message" proper)                   */
+/* ============================================================ */
+
+.msg-area {
+  margin: 0 3px 3px;
+  padding: 10px 12px 12px;
+  background: var(--msg-bg);
+  border: 2px solid;
+  border-color: #808080 #ffffff #ffffff #808080;     /* inset */
+  min-height: 170px;
+  display: flex;
+  flex-direction: column;
+}
+.msg-head {
+  font-family: var(--font-chrome);
+  font-size: 11px;
+  color: var(--aim-navy-a);
+  font-weight: bold;
+  margin-bottom: 8px;
+}
+.msg-head .msg-ts { color: var(--ink-mute); font-weight: normal; font-size: 10px; margin-left: 6px; }
+.msg-body {
+  font-family: var(--font-body);
+  font-size: 16px;
+  line-height: 1.45;
+  color: var(--ink);
+  white-space: pre-line;
+  margin: 0;
+  flex: 1;
+  transition: opacity 120ms ease;
+  min-height: 3em;
+}
+.msg-body.is-empty { color: var(--ink-mute); font-style: italic; font-size: 14px; }
+.msg-typing {
+  font-family: var(--font-chrome);
   font-size: 11px;
   color: var(--ink-mute);
-  transition: opacity 200ms ease;
+  font-style: italic;
+  margin: 4px 0 0;
+  display: flex;
+  align-items: center;
+  gap: 4px;
+}
+.msg-typing .dot {
+  width: 3px; height: 3px; background: var(--ink-mute); border-radius: 0;
+  display: inline-block;
+  animation: blink 1s infinite;
+}
+.msg-typing .dot:nth-child(2) { animation-delay: 0.15s; }
+.msg-typing .dot:nth-child(3) { animation-delay: 0.3s; }
+@keyframes blink { 0%, 80%, 100% { opacity: 0.2; } 40% { opacity: 1; } }
+
+.msg-actions {
+  margin-top: 14px;
+  display: flex; gap: 6px; align-items: center; flex-wrap: wrap;
+}
+.flash {
+  font-family: var(--font-chrome);
+  font-size: 10px;
+  color: var(--ink-mute);
+  margin-left: 4px;
   opacity: 0;
+  transition: opacity 200ms ease;
 }
 .flash.is-visible { opacity: 1; }
 
-.vote-btn {
-  background: none;
-  border: 2px solid var(--ink);
-  padding: 8px 12px;
+/* ============================================================ */
+/* AIM buttons — chunky outset, inset on press                   */
+/* ============================================================ */
+
+.aim-btn {
+  background: var(--aim-gray);
+  border: 2px solid;
+  border-color: #ffffff #404040 #404040 #ffffff;    /* outset */
+  padding: 4px 12px;
+  font-family: var(--font-chrome);
+  font-size: 11px;
+  color: var(--ink);
   cursor: pointer;
+  border-radius: 0;
+  min-height: 24px;
+  line-height: 1;
   display: inline-flex;
   align-items: center;
-  gap: 6px;
-  font-size: 14px;
-  border-radius: 0;
-  line-height: 1.2;
+  justify-content: center;
+  gap: 4px;
+}
+.aim-btn:active,
+.aim-btn.is-pressed { border-color: #404040 #ffffff #ffffff #404040; padding: 5px 11px 3px 13px; }
+.aim-btn:focus { outline: 1px dotted #000; outline-offset: -4px; }
+.aim-btn:disabled { color: var(--aim-gray-dark); cursor: not-allowed; }
+.aim-btn.is-cast { background: var(--aim-yellow); }
+
+.aim-btn-big {
+  font-weight: bold;
+  font-size: 15px;
+  padding: 10px 40px;
+  letter-spacing: 3px;
   min-height: 40px;
 }
-.vote-btn:hover { background: var(--ink); color: var(--bg); }
-.vote-btn.is-cast { background: var(--ink); color: var(--bg); }
-.vote-btn:focus { outline: 1px dotted var(--ink); outline-offset: 2px; }
-.vote-ico { font-size: 15px; line-height: 1; }
-.vote-count { font-size: 13px; min-width: 1ch; text-align: left; }
+.aim-btn-big:active { padding: 11px 39px 9px 41px; }
 
-/* Pour button ------------------------------------------------------- */
+.aim-btn-icon { min-height: 24px; padding: 4px 8px; font-size: 13px; }
 
-.pour-wrap { text-align: center; margin: 10px 0 18px; }
-.pour {
-  background: var(--bg);
-  color: var(--ink);
-  border: 3px solid var(--ink);
-  padding: 12px 32px;
-  font-size: 16px;
-  letter-spacing: 3px;
-  text-transform: uppercase;
-  cursor: pointer;
-  font-weight: bold;
-  border-radius: 0;
+/* Pour row */
+.pour-wrap {
+  margin: 4px 3px;
+  padding: 10px 8px 12px;
+  background: var(--aim-gray);
+  border: 2px solid;
+  border-color: #ffffff #404040 #404040 #ffffff;
+  display: flex;
+  justify-content: center;
 }
-.pour:hover, .pour:focus { background: var(--ink); color: var(--bg); outline: none; }
-.pour:active { transform: translateY(1px); }
 
-/* Counters ---------------------------------------------------------- */
+/* ============================================================ */
+/* Status bar                                                     */
+/* ============================================================ */
 
-.counters {
-  text-align: center;
-  font-size: 12px;
+.status-bar {
+  margin: 0 3px 3px;
+  padding: 2px 6px;
+  border: 2px solid;
+  border-color: #808080 #ffffff #ffffff #808080;    /* inset */
+  font-family: var(--font-chrome);
+  font-size: 10px;
   color: var(--ink-mute);
-  line-height: 1.7;
-  margin-bottom: 24px;
-}
-
-/* Footer ------------------------------------------------------------ */
-
-.foot {
-  margin-top: auto;
   display: flex;
   justify-content: space-between;
   align-items: center;
-  font-size: 11px;
-  color: var(--ink-mute);
-  padding-top: 10px;
-  border-top: 1px dashed var(--ink-mute);
-  gap: 10px;
+  gap: 8px;
+  min-height: 22px;
   flex-wrap: wrap;
-  min-height: 44px;
 }
-.foot-left { flex: 1; min-width: 0; }
-.foot-mute .icon-btn { font-size: 16px; color: var(--ink-mute); padding: 6px 8px; min-width: 36px; min-height: 36px; }
+.status-cell { padding: 2px 4px; }
+.status-cell + .status-cell { border-left: 1px solid var(--aim-gray-dark); }
+.status-left, .status-right { display: flex; align-items: center; gap: 4px; flex-wrap: wrap; }
+.status-right .aim-btn { padding: 2px 6px; min-height: 18px; font-size: 11px; }
 
-/* Overlays ---------------------------------------------------------- */
+/* ============================================================ */
+/* Window shake — AIM new-message attention                      */
+/* ============================================================ */
+
+@keyframes window-shake {
+  0%, 100%    { transform: translate(0, 0); }
+  15%         { transform: translate(-4px, -1px); }
+  30%         { transform: translate(4px, 1px); }
+  45%         { transform: translate(-3px, 0); }
+  60%         { transform: translate(3px, -1px); }
+  75%         { transform: translate(-1px, 1px); }
+}
+.aim-window.shake { animation: window-shake 0.45s ease; }
+
+/* ============================================================ */
+/* Overlays                                                       */
+/* ============================================================ */
 
 .overlay {
   position: fixed;
@@ -210,62 +341,60 @@ button, input, textarea {
   overflow: auto;
 }
 
-/* Yell */
+/* Yell — same big-font, cream background, so a phone screen reads from across the table */
 .yell {
-  background: var(--bg);
+  background: var(--aim-gray);
   display: flex;
   align-items: center;
   justify-content: center;
   flex-direction: column;
-  padding: 20px;
+  padding: 24px;
   text-align: center;
   cursor: pointer;
 }
 .yell-text {
-  font-size: 7vw;
+  font-family: var(--font-body);
+  font-size: 8vw;
   line-height: 1.1;
   max-width: 95vw;
   white-space: pre-line;
   color: var(--ink);
   font-weight: bold;
-  letter-spacing: -0.01em;
 }
-@media (max-width: 480px) {
-  .yell-text { font-size: 9vw; }
-}
+@media (max-width: 480px) { .yell-text { font-size: 10vw; } }
 .yell-hint {
   position: absolute;
   bottom: 24px;
-  left: 0;
-  right: 0;
+  left: 0; right: 0;
   text-align: center;
-  font-size: 12px;
+  font-family: var(--font-chrome);
+  font-size: 11px;
   color: var(--ink-mute);
   transition: opacity 500ms ease;
 }
 .yell-hint.is-faded { opacity: 0; }
 
-/* CLI */
+/* CLI — re-skin to match: still terminal but narrower palette */
 .cli {
-  background: var(--cli-black);
-  color: var(--cli-green);
-  font-family: var(--font);
-  font-size: 17px;
+  background: #000;
+  color: #c8ffc8;
+  font-family: "Courier New", "Lucida Console", monospace;
+  font-size: 16px;
   display: flex;
   flex-direction: column;
-  padding: 14px 18px;
+  padding: 12px 16px;
 }
-.cli-buffer { flex: 1; overflow: auto; white-space: pre-wrap; padding-bottom: 14px; }
+.cli-buffer { flex: 1; overflow: auto; white-space: pre-wrap; padding-bottom: 12px; }
 .cli-buffer .line { margin: 0; padding: 0; }
 .cli-buffer .line.cmd { color: #fff; }
 .cli-buffer .line.err { color: #ff8080; }
 .cli-input-row { display: flex; gap: 8px; align-items: baseline; border-top: 1px dashed #2a2; padding-top: 10px; }
 .cli-prompt { color: #fff; }
-.cli-input { background: transparent; border: 0; outline: 0; color: var(--cli-green); flex: 1; font-size: 17px; caret-color: var(--cli-green); }
+.cli-input { background: transparent; border: 0; outline: 0; color: #c8ffc8; flex: 1; font-size: 16px; caret-color: #c8ffc8; font-family: inherit; }
 
 /* Marquee */
 .marquee {
-  background: var(--bg);
+  background: var(--aim-gray);
   display: flex;
   align-items: center;
   overflow: hidden;
@@ -275,6 +404,7 @@ button, input, textarea {
   display: inline-block;
   white-space: nowrap;
   padding-left: 100vw;
+  font-family: var(--font-body);
   font-size: 5vw;
   animation: scroll-left var(--marquee-duration, 180s) linear infinite;
   color: var(--ink);
@@ -284,37 +414,51 @@ button, input, textarea {
   to   { transform: translateX(-100%); }
 }
 
-/* Away (AIM) */
-.away { background: #316ac5; display: flex; align-items: center; justify-content: center; padding: 20px; }
-.aim-window { background: var(--aim-white); border: 3px solid var(--ink); max-width: 420px; width: 100%; box-shadow: 4px 4px 0 var(--ink); }
-.aim-titlebar { background: #0a246a; color: #fff; padding: 4px 8px; display: flex; justify-content: space-between; align-items: center; font-size: 12px; font-weight: bold; }
-.aim-x { border: 2px solid #fff; padding: 0 4px; font-size: 11px; line-height: 1; background: #c55; cursor: pointer; }
-.aim-body { padding: 14px 16px 18px; background: var(--aim-white); color: var(--ink); font-size: 14px; white-space: pre-line; }
-.aim-auto { font-style: italic; color: #555; margin-bottom: 6px; font-size: 12px; }
-.aim-msg { white-space: pre-line; line-height: 1.55; }
+/* Away — another AIM window, styled the same */
+.away {
+  background: #3A6EA5;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 20px;
+}
+.away .aim-window { max-width: 420px; }
+.away-body {
+  margin: 0 3px 3px;
+  padding: 12px 14px 16px;
+  background: var(--msg-bg);
+  border: 2px solid;
+  border-color: #808080 #ffffff #ffffff #808080;
+  font-family: var(--font-body);
+  font-size: 14px;
+  line-height: 1.5;
+  color: var(--ink);
+  white-space: pre-line;
+}
+.away-auto {
+  font-family: var(--font-chrome);
+  font-size: 11px;
+  font-style: italic;
+  color: var(--ink-mute);
+  margin-bottom: 6px;
+}
 
-/* Responsive ------------------------------------------------------- */
+/* ============================================================ */
+/* Responsive                                                     */
+/* ============================================================ */
 
 @media (max-width: 480px) {
-  body { font-size: 14px; }
-  .view-main { padding: 20px 14px 14px; }
-  .title { font-size: 18px; letter-spacing: 3px; }
-  .tagline { font-size: 12px; }
-  .ticker { font-size: 12px; padding: 6px 8px; margin-bottom: 14px; }
-  .toast { font-size: 17px; line-height: 1.5; }
-  .toast-actions { gap: 10px; margin-top: 16px; }
-  .pour { padding: 14px 32px; font-size: 15px; letter-spacing: 2.5px; }
-  .pour-wrap { margin: 8px 0 14px; }
-  .foot { font-size: 10px; padding-top: 8px; }
-  .stage { min-height: 140px; padding: 16px 0; }
-  .aim-window { max-width: 340px; }
-  .aim-body { font-size: 13px; padding: 12px 14px 16px; }
-  .cli { font-size: 15px; padding: 10px 12px; }
-  .cli-input { font-size: 15px; }
-  .marquee-track { font-size: 8vw; }
+  body { padding: 10px 6px; align-items: flex-start; }
+  .aim-window { max-width: 100%; box-shadow: 1px 1px 0 #000; }
+  .msg-body { font-size: 15px; }
+  .buddy-quote { font-size: 12px; }
+  .aim-btn-big { font-size: 14px; padding: 10px 28px; letter-spacing: 2px; }
+  .msg-area { min-height: 150px; padding: 8px 10px 10px; }
+  .status-bar { font-size: 10px; }
 }
 
 @media (max-width: 360px) {
-  .vote-btn { padding: 6px 8px; font-size: 13px; gap: 4px; }
-  .title { font-size: 16px; letter-spacing: 2px; }
+  .tb-title { font-size: 10px; }
+  .buddy-name { font-size: 12px; }
+  .buddy-icon { width: 34px; height: 34px; }
 }

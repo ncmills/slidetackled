@@ -81,19 +81,20 @@ function utcDateKey() {
 // ============================================================
 
 function startTicker() {
-  const el = $('#ticker');
+  const card = $('#ticker');
   const body = $('#ticker-body');
-  if (!state.capstone.length) { el.hidden = true; return; }
+  if (!state.capstone.length) { card.hidden = true; return; }
 
+  // FIX 2: only the quote body fades; the buddy name/status/label stay static so the
+  //        card reads like a persistent buddy-info panel, not a rotating banner.
   const show = (i) => {
-    el.style.opacity = '0';
+    body.style.opacity = '0';
     setTimeout(() => {
       body.textContent = state.capstone[i];
-      el.style.opacity = '1';
+      body.style.opacity = '1';
     }, 200);
   };
 
-  // Start at a randomized offset so two visitors don't see the same entry at the same moment.
   tickerIdx = Math.floor(Math.random() * state.capstone.length);
   show(tickerIdx);
 
@@ -124,16 +125,47 @@ function renderCounters() {
 function renderToast(idx) {
   const toast = state.archive[idx];
   const el = $('#toast');
+  const typing = $('#typing');
+  const actions = $('#toast-actions');
+  const ts = $('#msg-ts');
+
+  // FIX 3: "Buddy is typing…" state before the toast lands. Selection already happened —
+  //        this is only a display delay to sell the AIM "incoming IM" feel.
   el.classList.remove('is-empty');
   el.style.opacity = '0';
+  el.textContent = '';
+  actions.hidden = true;
+  typing.hidden = false;
+
   setTimeout(() => {
+    typing.hidden = true;
     el.textContent = toast;
     el.style.opacity = '1';
-  }, 80);
+    actions.hidden = false;
+    if (ts) ts.textContent = clockTime();
+
+    // FIX 3: window-shake on new message (AIM attention cue).
+    const win = $('#main-window');
+    if (win) {
+      win.classList.remove('shake');
+      void win.offsetWidth;   // reflow so the animation can retrigger
+      win.classList.add('shake');
+      setTimeout(() => win.classList.remove('shake'), 500);
+    }
+  }, 520);
+
   state.currentIdx = idx;
-  $('#toast-actions').hidden = false;
   updateVoteUI();
   renderCounters();
+}
+
+function clockTime() {
+  const d = new Date();
+  let h = d.getHours();
+  const m = String(d.getMinutes()).padStart(2, '0');
+  const ap = h >= 12 ? 'PM' : 'AM';
+  h = h % 12 || 12;
+  return `${h}:${m} ${ap}`;
 }
 
 function setFlash(text) {
