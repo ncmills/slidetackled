@@ -1,5 +1,4 @@
-import { Redis } from '@upstash/redis';
-const kv = Redis.fromEnv();
+import { kv } from './_redis.js';
 import { json } from './_util.js';
 
 // GET /api/votes — returns { archive: { idx: {up, down}, ... }, capstone: {...}, community: {...} }

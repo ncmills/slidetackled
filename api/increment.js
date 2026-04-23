@@ -1,5 +1,4 @@
-import { Redis } from '@upstash/redis';
-const kv = Redis.fromEnv();
+import { kv } from './_redis.js';
 import { json, clientIp, rateLimit } from './_util.js';
 
 export default async function handler(req, res) {

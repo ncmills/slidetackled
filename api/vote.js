@@ -1,5 +1,4 @@
-import { Redis } from '@upstash/redis';
-const kv = Redis.fromEnv();
+import { kv } from './_redis.js';
 import { json, readBody, clientIp, rateLimit } from './_util.js';
 
 const VALID_MODES = new Set(['archive', 'capstone', 'community']);
