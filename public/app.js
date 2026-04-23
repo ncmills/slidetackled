@@ -1,10 +1,9 @@
 // slidetackled.com — simple AIM-era toast generator.
-// Single archive (toasts.md) drives POUR. Capstone (capstone.md) feeds a rotating ticker.
+// Single archive (toasts.md) drives the BUZZ button.
 
 const state = {
   config: null,
-  archive: [],        // pool the POUR button draws from
-  capstone: [],       // feeds the ticker
+  archive: [],
   votes: {},          // { idx: { up, down } } keyed by archive index
   usedIndices: new Set(),
   currentIdx: null,
@@ -14,10 +13,6 @@ const state = {
   muted: true,
   view: 'main',       // 'main' | 'yell' | 'cli' | 'marquee' | 'away'
 };
-
-const TICKER_INTERVAL_MS = 5500;
-let tickerTimer = null;
-let tickerIdx = 0;
 
 const $ = (sel) => document.querySelector(sel);
 const $$ = (sel) => Array.from(document.querySelectorAll(sel));
@@ -29,12 +24,11 @@ async function loadJson(path) {
 }
 
 async function boot() {
-  let config, archive, capstone;
+  let config, archive;
   try {
-    [config, archive, capstone] = await Promise.all([
+    [config, archive] = await Promise.all([
       loadJson('/config.json'),
       loadJson('/toasts.json'),
-      loadJson('/capstone.json'),
     ]);
   } catch (err) {
     console.error(err);
@@ -44,7 +38,6 @@ async function boot() {
   }
   state.config = config;
   state.archive = archive;
-  state.capstone = capstone;
 
   // Prefs
   state.muted = localStorage.getItem('slidetackled:muted') !== 'false';
@@ -53,7 +46,6 @@ async function boot() {
 
   paintMuteIcon();
   bindUI();
-  startTicker();
   renderCounters();
   renderFooter();
   await fetchVotesBulk();
@@ -77,49 +69,20 @@ function utcDateKey() {
 }
 
 // ============================================================
-// Ticker (rotating capstone)
-// ============================================================
-
-function startTicker() {
-  const card = $('#ticker');
-  const body = $('#ticker-body');
-  if (!state.capstone.length) { card.hidden = true; return; }
-
-  // FIX 2: only the quote body fades; the buddy name/status/label stay static so the
-  //        card reads like a persistent buddy-info panel, not a rotating banner.
-  const show = (i) => {
-    body.style.opacity = '0';
-    setTimeout(() => {
-      body.textContent = state.capstone[i];
-      body.style.opacity = '1';
-    }, 200);
-  };
-
-  tickerIdx = Math.floor(Math.random() * state.capstone.length);
-  show(tickerIdx);
-
-  clearInterval(tickerTimer);
-  tickerTimer = setInterval(() => {
-    tickerIdx = (tickerIdx + 1) % state.capstone.length;
-    show(tickerIdx);
-  }, TICKER_INTERVAL_MS);
-}
-
-// ============================================================
 // Rendering
 // ============================================================
 
 function renderFooter() {
   const poured = state.globalPourCount == null ? '…' : state.globalPourCount.toLocaleString();
   const visitor = state.visitorNumber == null ? '…' : state.visitorNumber.toLocaleString();
-  $('#foot-visitor').textContent = `visitor #${visitor} · ${poured} poured`;
+  $('#foot-visitor').textContent = `visitor #${visitor} · ${poured} buzzed`;
 }
 
 function renderCounters() {
   const total = state.archive.length;
   const used = state.usedIndices.size;
   $('#counter-main').textContent = state.currentIdx == null ? ' ' : `toast ${used} of ${total}`;
-  $('#counter-session').textContent = `you: ${state.sessionPourCount} poured today`;
+  $('#counter-session').textContent = `you: ${state.sessionPourCount} buzzed today`;
 }
 
 function renderToast(idx) {

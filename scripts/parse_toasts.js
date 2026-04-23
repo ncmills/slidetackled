@@ -99,10 +99,8 @@ function writeJson(name, data) {
 
 function main() {
   const archive = parseFile('toasts.md', { required: true });
-  const capstone = parseFile('capstone.md', { required: true });
 
   writeJson('toasts.json', archive);
-  writeJson('capstone.json', capstone);
 
   // Emit config as JSON for the browser.
   writeFileSync(

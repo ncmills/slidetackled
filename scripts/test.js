@@ -40,13 +40,10 @@ console.log('slidetackled smoke tests');
 console.log('────────────────────────');
 
 const archive = loadJson('toasts.json');
-const capstone = loadJson('capstone.json');
 const config = loadJson('config.json');
 
 assert(Array.isArray(archive), 'archive is an array');
-assert(Array.isArray(capstone), 'capstone is an array');
 assert(archive && archive.length >= 50, `archive.length >= 50 (got ${archive?.length})`);
-assert(capstone && capstone.length >= 25, `capstone.length >= 25 (got ${capstone?.length})`);
 
 function checkNoHeadersOrEmpties(arr, name) {
   if (!arr) return;
@@ -66,7 +63,6 @@ function checkNoHeadersOrEmpties(arr, name) {
   console.log(`  ok   ${name} has no empty entries or stray markup`);
 }
 checkNoHeadersOrEmpties(archive, 'archive');
-checkNoHeadersOrEmpties(capstone, 'capstone');
 
 assert(config && typeof config === 'object', 'config.json parses');
 assert(config && config.EASTER_EGGS && typeof config.EASTER_EGGS === 'object', 'config has EASTER_EGGS');
