@@ -1,0 +1,101 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="description" content="a toast generator. press a button, raise a glass.">
+  <meta name="robots" content="index,follow">
+  <meta property="og:title" content="SLIDE TACKLED">
+  <meta property="og:description" content="a toast generator">
+  <meta property="og:type" content="website">
+  <meta property="og:url" content="https://slidetackled.com">
+  <meta property="og:image" content="https://slidetackled.com/og.png">
+  <meta property="og:image:width" content="1200">
+  <meta property="og:image:height" content="630">
+  <meta name="twitter:card" content="summary_large_image">
+  <meta name="twitter:title" content="SLIDE TACKLED">
+  <meta name="twitter:description" content="a toast generator">
+  <meta name="twitter:image" content="https://slidetackled.com/og.png">
+  <title>SLIDE TACKLED — a toast generator</title>
+  <link rel="icon" href="/favicon.ico" sizes="any">
+  <link rel="stylesheet" href="/styles.css">
+</head>
+<body>
+  <main id="main" class="view view-main">
+    <header class="site-head">
+      <h1 class="title">SLIDE TACKLED</h1>
+      <p class="tagline">a toast generator</p>
+    </header>
+
+    <!-- Rotating capstone ticker -->
+    <div class="ticker" id="ticker" aria-live="polite">
+      <span class="ticker-label">&#9733; from the capstone:</span>
+      <span class="ticker-body" id="ticker-body"></span>
+    </div>
+
+    <section class="stage" aria-live="polite">
+      <p class="toast" id="toast"></p>
+      <div class="toast-actions" id="toast-actions" hidden>
+        <button class="vote-btn" id="btn-up" title="upvote" aria-label="upvote">
+          <span class="vote-ico">&#128077;</span><span class="vote-count" id="vote-up-count">0</span>
+        </button>
+        <button class="vote-btn" id="btn-down" title="downvote" aria-label="downvote">
+          <span class="vote-ico">&#128078;</span><span class="vote-count" id="vote-down-count">0</span>
+        </button>
+        <button class="icon-btn" id="btn-pin" title="tap to copy, hold to copy link" aria-label="copy toast">&#128204;</button>
+        <span class="flash" id="flash" aria-live="polite"></span>
+      </div>
+    </section>
+
+    <div class="pour-wrap">
+      <button class="pour" id="pour">POUR</button>
+    </div>
+
+    <div class="counters">
+      <div class="counter-main" id="counter-main">&nbsp;</div>
+      <div class="counter-session" id="counter-session">&nbsp;</div>
+    </div>
+
+    <footer class="foot">
+      <span class="foot-left" id="foot-visitor">&nbsp;</span>
+      <span class="foot-mute"><button class="icon-btn" id="btn-mute" title="toggle sound" aria-label="toggle sound">&#128263;</button></span>
+    </footer>
+  </main>
+
+  <!-- Yell Mode overlay -->
+  <div id="yell" class="overlay yell" hidden>
+    <div class="yell-text" id="yell-text"></div>
+    <div class="yell-hint" id="yell-hint">tap to exit</div>
+  </div>
+
+  <!-- CLI overlay -->
+  <div id="cli" class="overlay cli" hidden>
+    <div class="cli-buffer" id="cli-buffer"></div>
+    <div class="cli-input-row">
+      <span class="cli-prompt">&gt;</span>
+      <input id="cli-input" class="cli-input" autocomplete="off" spellcheck="false">
+    </div>
+  </div>
+
+  <!-- Marquee overlay -->
+  <div id="marquee" class="overlay marquee" hidden>
+    <div class="marquee-track" id="marquee-track"></div>
+  </div>
+
+  <!-- Away overlay -->
+  <div id="away" class="overlay away" hidden>
+    <div class="aim-window">
+      <div class="aim-titlebar">
+        <span class="aim-title">slidetackled — Instant Message</span>
+        <span class="aim-x">X</span>
+      </div>
+      <div class="aim-body">
+        <div class="aim-auto">Auto-response from <b>slidetackled</b>:</div>
+        <div class="aim-msg" id="aim-msg"></div>
+      </div>
+    </div>
+  </div>
+
+  <script src="/app.js" type="module"></script>
+</body>
+</html>
