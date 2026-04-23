@@ -1,4 +1,5 @@
-import { kv } from '@vercel/kv';
+import { Redis } from '@upstash/redis';
+const kv = Redis.fromEnv();
 import { json } from './_util.js';
 
 // GET /api/votes — returns { archive: { idx: {up, down}, ... }, capstone: {...}, community: {...} }

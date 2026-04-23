@@ -1,4 +1,5 @@
-import { kv } from '@vercel/kv';
+import { Redis } from '@upstash/redis';
+const kv = Redis.fromEnv();
 import { json, readBody, clientIp, rateLimit } from './_util.js';
 
 const VALID_MODES = new Set(['archive', 'capstone', 'community']);

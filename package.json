@@ -10,7 +10,7 @@
     "start": "node scripts/dev_server.js"
   },
   "dependencies": {
-    "@vercel/kv": "^3.0.0"
+    "@upstash/redis": "^1.34.0"
   },
   "engines": {
     "node": ">=20"
