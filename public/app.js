@@ -84,9 +84,7 @@ function renderFooter() {
 }
 
 function renderCounters() {
-  const total = state.archive.length;
-  const used = state.usedIndices.size;
-  $('#counter-main').textContent = state.currentIdx == null ? ' ' : `toast ${used} of ${total}`;
+  // Archive size hidden — pool should feel endless.
   $('#counter-session').textContent = `you: ${state.sessionPourCount} buzzed today`;
 }
 
@@ -125,6 +123,92 @@ function renderToast(idx) {
   state.currentIdx = idx;
   updateVoteUI();
   renderCounters();
+}
+
+// ============================================================
+// Button FX
+// ============================================================
+
+function buzzBurst(el) {
+  const rect = el.getBoundingClientRect();
+  const cx = rect.left + rect.width / 2;
+  const cy = rect.top + rect.height / 2;
+  const n = 10;
+  for (let i = 0; i < n; i++) {
+    const dot = document.createElement('span');
+    dot.className = 'burst-dot';
+    const angle = (i / n) * Math.PI * 2;
+    const dist = 36 + Math.random() * 14;
+    dot.style.setProperty('--dx', `${Math.cos(angle) * dist}px`);
+    dot.style.setProperty('--dy', `${Math.sin(angle) * dist}px`);
+    dot.style.left = `${cx}px`;
+    dot.style.top = `${cy}px`;
+    document.body.appendChild(dot);
+    setTimeout(() => dot.remove(), 550);
+  }
+}
+
+function floatEmoji(anchor, emoji) {
+  const rect = anchor.getBoundingClientRect();
+  const el = document.createElement('span');
+  el.className = 'vote-float';
+  el.textContent = emoji;
+  el.style.left = `${rect.left + rect.width / 2}px`;
+  el.style.top = `${rect.top}px`;
+  document.body.appendChild(el);
+  setTimeout(() => el.remove(), 750);
+}
+
+function pinPulse() {
+  const el = $('#btn-pin');
+  el.classList.remove('pin-pulse');
+  void el.offsetWidth;
+  el.classList.add('pin-pulse');
+  setTimeout(() => el.classList.remove('pin-pulse'), 500);
+}
+
+// Classic AIM emoticons, inserted into the message area when smiley is clicked.
+const EMOTICONS = [':-)', ':-D', ';-)', ':-P', ':-O', 'B-)', ':-*', '>:-O', ':-|', 'XD'];
+function dropEmoticon() {
+  play('doo');
+  const e = EMOTICONS[Math.floor(Math.random() * EMOTICONS.length)];
+  const toast = $('#toast');
+  const span = document.createElement('span');
+  span.className = 'emoticon-drop';
+  span.textContent = e;
+  toast.appendChild(span);
+  setTimeout(() => span.remove(), 1500);
+}
+
+// Warn meter — fills 20% per click. At 100%, big red flash + reset.
+let warnLevel = 0;
+function bumpWarn() {
+  play('warn');
+  warnLevel = Math.min(100, warnLevel + 20);
+  $('#warn-cell').hidden = false;
+  $('#warn-fill').style.width = `${warnLevel}%`;
+  if (warnLevel >= 100) {
+    setTimeout(() => {
+      const flash = document.createElement('div'); flash.className = 'warn-flash';
+      document.body.appendChild(flash);
+      const banner = document.createElement('div'); banner.className = 'warn-banner'; banner.textContent = 'WARNED!';
+      document.body.appendChild(banner);
+      setTimeout(() => { flash.remove(); banner.remove(); }, 1300);
+      warnLevel = 0;
+      $('#warn-fill').style.width = '0%';
+      setTimeout(() => { $('#warn-cell').hidden = true; }, 1400);
+    }, 200);
+  }
+}
+
+function animateWindow(kind) {
+  play('click');
+  const win = $('#main-window');
+  win.classList.remove('minimize', 'maximize');
+  void win.offsetWidth;
+  win.classList.add(kind);
+  const dur = kind === 'minimize' ? 900 : 500;
+  setTimeout(() => win.classList.remove(kind), dur);
 }
 
 function clockTime() {
@@ -339,7 +423,7 @@ function setupPin() {
     holdTimer = setTimeout(() => {
       didHold = true;
       const url = `${location.origin}/#toast=${state.currentIdx}`;
-      copy(url).then(() => setFlash('link copied'));
+      copy(url).then(() => { setFlash('link copied'); pinPulse(); });
     }, 500);
   });
   const clear = () => clearTimeout(holdTimer);
@@ -348,7 +432,7 @@ function setupPin() {
     clear();
     if (didHold) return;
     if (state.currentIdx == null) return;
-    copy(state.archive[state.currentIdx]).then(() => setFlash('copied'));
+    copy(state.archive[state.currentIdx]).then(() => { setFlash('copied'); pinPulse(); });
   });
   btn.addEventListener('pointercancel', clear);
   btn.addEventListener('pointerleave', clear);
@@ -551,13 +635,17 @@ function routeFromHash() {
 // ============================================================
 
 function bindUI() {
-  $('#pour').addEventListener('click', pour);
+  $('#pour').addEventListener('click', (e) => { buzzBurst(e.currentTarget); pour(); });
   setupPourHold();
   setupPin();
   setupCLI();
 
-  $('#btn-up').addEventListener('click', () => onVote('up'));
-  $('#btn-down').addEventListener('click', () => onVote('down'));
+  $('#btn-up').addEventListener('click', (e) => { floatEmoji(e.currentTarget, '👍'); onVote('up'); });
+  $('#btn-down').addEventListener('click', (e) => { floatEmoji(e.currentTarget, '👎'); onVote('down'); });
+
+  // New AIM toolbar buttons
+  $('#btn-smiley').addEventListener('click', dropEmoticon);
+  $('#btn-warn').addEventListener('click', bumpWarn);
 
   $('#btn-mute').addEventListener('click', () => {
     state.muted = !state.muted;
@@ -570,6 +658,24 @@ function bindUI() {
   $('#help-ok').addEventListener('click', exitOverlay);
   $('#help-close-x').addEventListener('click', exitOverlay);
   $('#help').addEventListener('click', (e) => { if (e.target === $('#help')) exitOverlay(); });
+
+  // Chrome buttons (×, _, □) — decorative Easter eggs.
+  $('#tb-min').addEventListener('click', () => animateWindow('minimize'));
+  $('#tb-max').addEventListener('click', () => animateWindow('maximize'));
+  $('#tb-close').addEventListener('click', () => {
+    play('click');
+    const win = $('#main-window');
+    win.classList.remove('shake');
+    void win.offsetWidth;
+    win.classList.add('shake');
+    setTimeout(() => win.classList.remove('shake'), 500);
+    // Flash "nice try."
+    const el = document.createElement('div');
+    el.className = 'nice-try';
+    el.textContent = 'nice try.';
+    document.body.appendChild(el);
+    setTimeout(() => el.remove(), 1300);
+  });
 
   document.addEventListener('keydown', (e) => {
     if (state.view === 'main') {

@@ -233,6 +233,127 @@ button, input, textarea { font-family: inherit; font-size: inherit; color: inher
 
 .aim-btn-icon { min-height: 24px; padding: 4px 8px; font-size: 13px; }
 
+/* Toolbar row (smiley + warn) */
+.toolbar-row {
+  margin: 0 3px 3px;
+  padding: 4px 6px;
+  background: var(--aim-gray);
+  border: 2px solid;
+  border-color: #808080 #ffffff #ffffff #808080;  /* inset */
+  display: flex;
+  gap: 4px;
+  align-items: center;
+}
+.toolbar-row .aim-btn-icon { min-height: 26px; padding: 3px 8px; font-size: 14px; }
+.toolbar-spacer { flex: 1; }
+
+/* Button FX --------------------------------------------------------- */
+
+/* BUZZ: radial dot burst */
+.burst-dot {
+  position: absolute;
+  width: 6px; height: 6px;
+  background: var(--aim-yellow);
+  border: 1px solid #000;
+  pointer-events: none;
+  z-index: 60;
+}
+@keyframes burst-fly {
+  0%   { opacity: 1; transform: translate(-50%, -50%) translate(0, 0); }
+  100% { opacity: 0; transform: translate(-50%, -50%) translate(var(--dx), var(--dy)); }
+}
+.burst-dot { animation: burst-fly 500ms ease-out forwards; }
+
+/* Floating vote emoji */
+.vote-float {
+  position: absolute;
+  font-size: 18px;
+  pointer-events: none;
+  z-index: 60;
+  opacity: 1;
+}
+@keyframes vote-float-up {
+  0%   { opacity: 1; transform: translate(-50%, 0) scale(0.9); }
+  100% { opacity: 0; transform: translate(-50%, -48px) scale(1.4); }
+}
+.vote-float { animation: vote-float-up 700ms ease-out forwards; }
+
+/* Pin pulse */
+@keyframes pin-pulse {
+  0%   { transform: scale(1); }
+  35%  { transform: scale(1.35) rotate(-8deg); }
+  70%  { transform: scale(1.1) rotate(6deg); }
+  100% { transform: scale(1) rotate(0); }
+}
+.pin-pulse { animation: pin-pulse 450ms ease-out; }
+
+/* Warn meter flash */
+.warn-flash {
+  position: fixed;
+  inset: 0;
+  background: rgba(196, 60, 53, 0.35);
+  pointer-events: none;
+  z-index: 70;
+  animation: warn-flash-anim 0.9s ease-out forwards;
+}
+@keyframes warn-flash-anim {
+  0% { opacity: 0; }
+  10% { opacity: 1; }
+  30% { opacity: 0.3; }
+  45% { opacity: 1; }
+  100% { opacity: 0; }
+}
+.warn-banner {
+  position: fixed;
+  left: 50%; top: 50%;
+  transform: translate(-50%, -50%);
+  background: var(--aim-red);
+  color: #fff;
+  padding: 12px 24px;
+  font-family: var(--font-chrome);
+  font-size: 24px;
+  font-weight: bold;
+  letter-spacing: 3px;
+  border: 3px solid #000;
+  z-index: 71;
+  pointer-events: none;
+  animation: nice-try-flash 1.3s ease forwards;
+}
+
+/* Smiley drop */
+.emoticon-drop {
+  display: inline-block;
+  font-family: var(--font-body);
+  font-size: 16px;
+  color: var(--aim-navy-a);
+  font-style: italic;
+  margin-left: 6px;
+  animation: emoticon-bounce 300ms ease-out;
+}
+@keyframes emoticon-bounce {
+  0%   { transform: translateY(-8px) scale(0.8); opacity: 0; }
+  100% { transform: translateY(0) scale(1); opacity: 1; }
+}
+
+/* Warn meter in status bar */
+.warn-meter {
+  display: inline-block;
+  width: 40px;
+  height: 8px;
+  background: #fff;
+  border: 1px solid #808080;
+  margin: 0 4px;
+  vertical-align: middle;
+  overflow: hidden;
+}
+.warn-meter-fill {
+  height: 100%;
+  width: 0%;
+  background: var(--aim-red);
+  transition: width 280ms ease;
+}
+.warn-label { font-size: 9px; color: var(--ink-mute); margin-right: 2px; }
+
 /* Pour row */
 .pour-wrap {
   margin: 4px 3px;
@@ -320,6 +441,49 @@ button, input, textarea { font-family: inherit; font-size: inherit; color: inher
   75%         { transform: translate(-1px, 1px); }
 }
 .aim-window.shake { animation: window-shake 0.45s ease; }
+
+/* Minimize: slide down to the bottom, pause, spring back up */
+@keyframes window-minimize {
+  0%   { transform: translateY(0) scale(1); opacity: 1; }
+  40%  { transform: translateY(120vh) scale(0.3); opacity: 0.6; }
+  60%  { transform: translateY(120vh) scale(0.3); opacity: 0.6; }
+  90%  { transform: translateY(-8px) scale(1.02); opacity: 1; }
+  100% { transform: translateY(0) scale(1); opacity: 1; }
+}
+.aim-window.minimize { animation: window-minimize 0.9s cubic-bezier(.42,0,.58,1); }
+
+/* Maximize: briefly expand past the borders, then settle */
+@keyframes window-maximize {
+  0%   { transform: scale(1); }
+  40%  { transform: scale(1.08); }
+  70%  { transform: scale(0.97); }
+  100% { transform: scale(1); }
+}
+.aim-window.maximize { animation: window-maximize 0.5s ease-out; }
+
+/* Nice-try flash message when close is clicked */
+.nice-try {
+  position: fixed;
+  left: 50%; top: 50%;
+  transform: translate(-50%, -50%);
+  background: var(--aim-navy-a);
+  color: #fff;
+  border: 2px solid;
+  border-color: #ffffff #404040 #404040 #ffffff;
+  padding: 8px 16px;
+  font-family: var(--font-chrome);
+  font-size: 14px;
+  font-weight: bold;
+  z-index: 100;
+  pointer-events: none;
+  animation: nice-try-flash 1.2s ease forwards;
+}
+@keyframes nice-try-flash {
+  0%   { opacity: 0; transform: translate(-50%, -40%) scale(0.8); }
+  20%  { opacity: 1; transform: translate(-50%, -50%) scale(1); }
+  70%  { opacity: 1; transform: translate(-50%, -50%) scale(1); }
+  100% { opacity: 0; transform: translate(-50%, -60%) scale(1); }
+}
 
 /* ============================================================ */
 /* Overlays                                                       */

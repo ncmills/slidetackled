@@ -128,8 +128,47 @@ function renderOne(name, samples) {
   }
 }
 
+function makeClick(duration = 0.07) {
+  // Short dry UI click — filtered noise burst with very fast decay.
+  return synth(duration, (t) => {
+    const env = Math.exp(-t * 80);
+    const n = Math.random() * 2 - 1;
+    const osc = Math.sin(2 * Math.PI * 1200 * t) * 0.3;
+    return (n * 0.4 + osc) * env * 0.3;
+  });
+}
+
+function makeWarn(duration = 0.45) {
+  // 3-beep alarm: rising pitch, square-ish, high energy.
+  return synth(duration, (t) => {
+    const beepLen = 0.10;
+    const gap = 0.05;
+    const cycle = beepLen + gap;
+    const n = Math.floor(t / cycle);
+    const lt = t - n * cycle;
+    if (lt > beepLen || n > 2) return 0;
+    const freq = 880 + n * 220;   // 880, 1100, 1320
+    const env = Math.min(1, lt / 0.005) * Math.exp(-lt * 4);
+    return Math.sign(Math.sin(2 * Math.PI * freq * t)) * env * 0.16;
+  });
+}
+
+function makeDoo(duration = 0.24) {
+  // Classic AIM message "doo doo" — low-then-high two-tone.
+  return synth(duration, (t) => {
+    const f = t < 0.10 ? 620 : (t < 0.13 ? 0 : 880);
+    if (f === 0) return 0;
+    const phase = t < 0.10 ? t : (t - 0.13);
+    const env = Math.min(1, phase / 0.005) * Math.exp(-phase * 10);
+    return Math.sin(2 * Math.PI * f * t) * env * 0.22;
+  });
+}
+
 renderOne('clink', makeClink());
 renderOne('buzz',  makeBuzz());
 renderOne('vote',  makeVote());
 renderOne('open',  makeOpen());
+renderOne('click', makeClick());
+renderOne('warn',  makeWarn());
+renderOne('doo',   makeDoo());
 console.log('[gen_sounds] done');

@@ -61,6 +61,13 @@
       </div>
     </div>
 
+    <!-- Mini AIM-style toolbar: smiley + warn (decorative Easter eggs) -->
+    <div class="toolbar-row">
+      <button class="aim-btn aim-btn-icon" id="btn-smiley" title="insert a classic emoticon">&#128578;</button>
+      <button class="aim-btn aim-btn-icon" id="btn-warn" title="warn">&#9888;&#65039;</button>
+      <span class="toolbar-spacer"></span>
+    </div>
+
     <!-- BUZZ (primary CTA) -->
     <div class="pour-wrap">
       <button class="aim-btn aim-btn-big" id="pour">BUZZ</button>
@@ -77,8 +84,11 @@
         <span class="status-cell" id="foot-visitor">visitor #… · … buzzed</span>
       </span>
       <span class="status-right">
-        <span class="status-cell" id="counter-main"></span>
         <span class="status-cell" id="counter-session">you: 0 buzzed today</span>
+        <span class="status-cell warn-cell" id="warn-cell" hidden>
+          <span class="warn-label">warn:</span>
+          <span class="warn-meter"><span class="warn-meter-fill" id="warn-fill"></span></span>
+        </span>
         <button class="status-glyph" id="btn-help" title="help" aria-label="help">?</button>
         <button class="aim-btn aim-btn-icon" id="btn-mute" title="toggle sound" aria-label="toggle sound">&#128263;</button>
       </span>
@@ -117,7 +127,10 @@ HIDDEN ROUTES
 OTHER
   📌 tap          copy toast text
   📌 hold         copy shareable link
+  🙂              drop a classic emoticon
+  ⚠               bump the warn meter
   hold BUZZ 2s    same as pressing y
+  × _ □           try them
 </pre>
       </div>
       <div class="pour-wrap help-foot">
