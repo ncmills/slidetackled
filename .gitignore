@@ -5,8 +5,7 @@ node_modules/
 .DS_Store
 *.log
 public/toasts.json
-public/capstone.json
 public/config.json
-public/audio/clink.wav
+public/audio/*.wav
 .vercel
 .env*.local

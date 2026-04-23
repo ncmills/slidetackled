@@ -292,6 +292,21 @@ button, input, textarea { font-family: inherit; font-size: inherit; color: inher
 .status-left, .status-right { display: flex; align-items: center; gap: 4px; flex-wrap: wrap; }
 .status-right .aim-btn { padding: 2px 6px; min-height: 18px; font-size: 11px; }
 
+/* Ghost "?" glyph — reads as status-bar chrome, not a shouting button. */
+.status-glyph {
+  background: none;
+  border: 0;
+  padding: 2px 6px;
+  font-family: var(--font-chrome);
+  font-size: 11px;
+  color: var(--ink-mute);
+  cursor: pointer;
+  line-height: 1;
+  min-height: 18px;
+}
+.status-glyph:hover { color: var(--ink); }
+.status-glyph:focus { outline: 1px dotted var(--ink); outline-offset: 1px; }
+
 /* ============================================================ */
 /* Window shake — AIM new-message attention                      */
 /* ============================================================ */
@@ -388,6 +403,38 @@ button, input, textarea { font-family: inherit; font-size: inherit; color: inher
 @keyframes scroll-left {
   from { transform: translateX(0); }
   to   { transform: translateX(-100%); }
+}
+
+/* Help — AIM dialog window */
+.help {
+  background: rgba(0, 0, 0, 0.35);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 20px;
+}
+.help-window { max-width: 440px; width: 100%; }
+.help-body {
+  margin: 4px 3px 3px;
+  padding: 12px 14px;
+  background: var(--msg-bg);
+  border: 2px solid;
+  border-color: #808080 #ffffff #ffffff #808080;
+}
+.help-list {
+  margin: 0;
+  font-family: "Courier New", "Lucida Console", monospace;
+  font-size: 12px;
+  line-height: 1.55;
+  color: var(--ink);
+  white-space: pre;
+  overflow-x: auto;
+}
+.help-foot { justify-content: flex-end; padding: 8px 10px 10px; }
+
+@media (max-width: 480px) {
+  .help-list { font-size: 11px; white-space: pre-wrap; }
+  .help-body { padding: 10px 10px; }
 }
 
 /* Away — another AIM window, styled the same */

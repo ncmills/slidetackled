@@ -6,7 +6,7 @@
   "description": "a toast generator",
   "scripts": {
     "build": "node scripts/parse_toasts.js",
-    "build:all": "node scripts/parse_toasts.js && node scripts/gen_favicon.js && node scripts/gen_clink.js",
+    "build:all": "node scripts/parse_toasts.js && node scripts/gen_favicon.js && node scripts/gen_sounds.js",
     "test": "node scripts/test.js",
     "start": "node scripts/dev_server.js",
     "promote": "node scripts/promote.js"

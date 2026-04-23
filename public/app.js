@@ -11,7 +11,7 @@ const state = {
   visitorNumber: null,
   globalPourCount: null,
   muted: true,
-  view: 'main',       // 'main' | 'yell' | 'cli' | 'marquee' | 'away'
+  view: 'main',       // 'main' | 'yell' | 'cli' | 'marquee' | 'away' | 'help'
 };
 
 const $ = (sel) => document.querySelector(sel);
@@ -51,6 +51,11 @@ async function boot() {
   await fetchVotesBulk();
   registerVisit();
   routeFromHash();
+
+  // "Buddy signed on" chirp once per visit if unmuted. Autoplay policies will still
+  // silently block this on fresh visits — that's fine, it plays on subsequent visits
+  // after the user has interacted once.
+  play('open');
 }
 
 boot();
@@ -196,6 +201,8 @@ async function onVote(dir) {
   localStorage.setItem(voteKey(idx), dir);
   updateVoteUI();
 
+  play('vote');
+
   const result = await sendVote(idx, dir);
   if (result && typeof result.up === 'number') {
     state.votes[idx] = { up: result.up, down: result.down };
@@ -265,16 +272,19 @@ async function pour() {
       if (typeof count === 'number') { state.globalPourCount = count; renderFooter(); }
     }
   } catch {}
-  playClink();
+  play('buzz');
 }
 
-function playClink() {
+// One helper for every sound effect. Silent when muted; falls back to WAV if MP3 fails.
+const SFX_VOL = { buzz: 0.45, clink: 0.5, vote: 0.35, open: 0.4 };
+function play(name) {
   if (state.muted) return;
-  const a = new Audio('/audio/clink.mp3');
-  a.volume = 0.5;
+  const vol = SFX_VOL[name] ?? 0.4;
+  const a = new Audio(`/audio/${name}.mp3`);
+  a.volume = vol;
   a.play().catch(() => {
-    const b = new Audio('/audio/clink.wav');
-    b.volume = 0.5;
+    const b = new Audio(`/audio/${name}.wav`);
+    b.volume = vol;
     b.play().catch(() => {});
   });
 }
@@ -369,11 +379,17 @@ function exitOverlay() {
   $('#cli').hidden = true;
   $('#marquee').hidden = true;
   $('#away').hidden = true;
+  $('#help').hidden = true;
   state.view = 'main';
   const h = location.hash;
   if (h === '#yell' || h === '#cli' || h === '#marquee' || h === '#away') {
     history.replaceState(null, '', location.pathname);
   }
+}
+
+function enterHelp() {
+  $('#help').hidden = false;
+  state.view = 'help';
 }
 
 function setupPourHold() {
@@ -549,6 +565,12 @@ function bindUI() {
     paintMuteIcon();
   });
 
+  // Help dialog — muted "?" in status bar
+  $('#btn-help').addEventListener('click', enterHelp);
+  $('#help-ok').addEventListener('click', exitOverlay);
+  $('#help-close-x').addEventListener('click', exitOverlay);
+  $('#help').addEventListener('click', (e) => { if (e.target === $('#help')) exitOverlay(); });
+
   document.addEventListener('keydown', (e) => {
     if (state.view === 'main') {
       const tag = document.activeElement && document.activeElement.tagName;
@@ -560,7 +582,7 @@ function bindUI() {
       if (e.key === '+' || e.key === '=') { marqueeDuration = Math.max(30, marqueeDuration - 20); $('#marquee').style.setProperty('--marquee-duration', marqueeDuration + 's'); }
       else if (e.key === '-' || e.key === '_') { marqueeDuration += 20; $('#marquee').style.setProperty('--marquee-duration', marqueeDuration + 's'); }
       else if (e.key === 'Escape') exitOverlay();
-    } else if (state.view === 'yell' || state.view === 'away' || state.view === 'cli') {
+    } else if (state.view === 'yell' || state.view === 'away' || state.view === 'cli' || state.view === 'help') {
       if (e.key === 'Escape') exitOverlay();
     }
   });

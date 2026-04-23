@@ -5,7 +5,7 @@
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <meta name="description" content="a toast generator. press BUZZ. read it aloud.">
   <meta name="robots" content="index,follow">
-  <meta property="og:title" content="SLIDE TACKLED">
+  <meta property="og:title" content="slidetackled">
   <meta property="og:description" content="a toast generator. press BUZZ.">
   <meta property="og:type" content="website">
   <meta property="og:url" content="https://slidetackled.com">
@@ -13,11 +13,12 @@
   <meta property="og:image:width" content="1200">
   <meta property="og:image:height" content="630">
   <meta name="twitter:card" content="summary_large_image">
-  <meta name="twitter:title" content="SLIDE TACKLED">
+  <meta name="twitter:title" content="slidetackled">
   <meta name="twitter:description" content="a toast generator. press BUZZ.">
   <meta name="twitter:image" content="https://slidetackled.com/og.png">
-  <title>SLIDE TACKLED — Instant Message</title>
+  <title>slidetackled — Instant Message</title>
   <link rel="icon" href="/favicon.ico" sizes="any">
+  <link rel="apple-touch-icon" href="/brand/bubble-180.png">
   <link rel="stylesheet" href="/styles.css">
 </head>
 <body>
@@ -78,12 +79,54 @@
       <span class="status-right">
         <span class="status-cell" id="counter-main"></span>
         <span class="status-cell" id="counter-session">you: 0 buzzed today</span>
+        <button class="status-glyph" id="btn-help" title="help" aria-label="help">?</button>
         <button class="aim-btn aim-btn-icon" id="btn-mute" title="toggle sound" aria-label="toggle sound">&#128263;</button>
       </span>
     </div>
   </div>
 
-  <!-- Yell Mode overlay (press y / hold POUR 2s) -->
+  <!-- Help overlay (opens via "?" glyph in the status bar) -->
+  <div id="help" class="overlay help" hidden>
+    <div class="aim-window help-window" role="dialog" aria-labelledby="help-title">
+      <div class="titlebar">
+        <span class="tb-glyph" aria-hidden="true"><img src="/brand/bubble.png" alt=""></span>
+        <span class="tb-title" id="help-title">slidetackled — Help</span>
+        <span class="tb-controls">
+          <button class="tb-btn tb-close" id="help-close-x" aria-label="close" title="close">&times;</button>
+        </span>
+      </div>
+      <div class="help-body">
+<pre class="help-list">
+KEYBOARD
+  Space / Enter   buzz a new toast
+  y               yell mode (full-screen)
+  ~               CLI mode
+  Esc             exit any overlay
+
+VOTING
+  👍 / 👎         shapes future BUZZ picks
+                  (ups win more, downs never vanish)
+
+HIDDEN ROUTES
+  /yell           huge-font mode
+  /cli            terminal
+  /marquee        scrolling ticker
+  /away           AIM auto-response
+  #toast=N        jump to toast N
+
+OTHER
+  📌 tap          copy toast text
+  📌 hold         copy shareable link
+  hold BUZZ 2s    same as pressing y
+</pre>
+      </div>
+      <div class="pour-wrap help-foot">
+        <button class="aim-btn" id="help-ok">OK</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Yell Mode overlay (press y or hold BUZZ 2s) -->
   <div id="yell" class="overlay yell" hidden>
     <div class="yell-text" id="yell-text"></div>
     <div class="yell-hint" id="yell-hint">tap to exit</div>

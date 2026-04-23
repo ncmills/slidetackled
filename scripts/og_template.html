@@ -5,93 +5,93 @@
 <style>
   html, body { margin: 0; padding: 0; width: 1200px; height: 630px; overflow: hidden; }
   body {
-    background: #f5f1e8;
-    color: #1a1a1a;
-    font-family: "Courier New", "Lucida Console", "Courier", monospace;
+    background: #3A6EA5;
+    font-family: Tahoma, "MS Sans Serif", Geneva, Verdana, sans-serif;
     display: flex;
-    flex-direction: column;
     align-items: center;
     justify-content: center;
-    text-align: center;
-    position: relative;
+    padding: 30px;
   }
-  .glass {
-    width: 128px;
-    height: 128px;
-    margin-bottom: 30px;
-    image-rendering: pixelated;
-    image-rendering: crisp-edges;
+  .window {
+    background: #ECE9D8;
+    border: 2px solid;
+    border-color: #ffffff #404040 #404040 #ffffff;
+    box-shadow: 4px 4px 0 #000;
+    width: 1040px;
+    padding: 3px;
   }
-  .title {
-    font-size: 90px;
-    letter-spacing: 18px;
+  .titlebar {
+    background: linear-gradient(to right, #0a246a 0%, #2a6bd8 100%);
+    color: #fff;
     font-weight: bold;
-    margin: 0;
-    text-transform: uppercase;
+    font-size: 22px;
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    padding: 8px 10px;
   }
-  .tagline {
-    font-size: 32px;
-    color: #888;
-    margin-top: 14px;
-    letter-spacing: 2px;
+  .tb-bubble { width: 34px; height: 34px; image-rendering: pixelated; object-fit: contain; }
+  .tb-ctrls { margin-left: auto; display: flex; gap: 6px; font-size: 16px; }
+  .tb-btn { background: #ECE9D8; color: #000; border: 1px solid #000; padding: 2px 10px; line-height: 1; }
+  .tb-close { background: #c43c35; color: #fff; }
+
+  .body {
+    background: #fff;
+    border: 2px solid;
+    border-color: #808080 #ffffff #ffffff #808080;
+    margin: 4px;
+    padding: 30px 40px;
+    display: flex;
+    align-items: center;
+    gap: 40px;
   }
-  .corner {
-    position: absolute;
-    top: 32px;
-    left: 32px;
+  /* Left: huge bubble — dominant visual */
+  .bubble-big {
+    width: 340px;
+    height: 340px;
+    object-fit: contain;
+    image-rendering: pixelated;
+    flex: 0 0 auto;
+  }
+  .right { flex: 1; text-align: left; }
+  .wordmark { width: 100%; max-width: 580px; image-rendering: pixelated; display: block; }
+  .tag {
+    font-family: "Helvetica Neue", Helvetica, Arial, sans-serif;
+    font-style: italic;
+    color: #1a1a1a;
+    font-size: 30px;
+    margin: 18px 0 22px;
+  }
+  .yellow-strip {
+    background: #FFDB4C;
+    border: 1px solid #000;
+    padding: 10px 18px;
     font-size: 20px;
-    color: #888;
+    color: #000;
+    font-family: Tahoma, sans-serif;
+    display: inline-block;
   }
-  .corner-r {
-    position: absolute;
-    bottom: 32px;
-    right: 32px;
-    font-size: 20px;
-    color: #888;
-  }
-  .rule {
-    width: 480px;
-    border-top: 3px dashed #888;
-    margin: 36px 0 10px;
-  }
-  .dot { color: #888; }
 </style>
 </head>
 <body>
-  <div class="corner">slidetackled.com</div>
-  <svg class="glass" viewBox="0 0 16 16" xmlns="http://www.w3.org/2000/svg" shape-rendering="crispEdges">
-    <!-- Pixel art cocktail glass matching favicon -->
-    <rect x="2"  y="1" width="12" height="1" fill="#1a1a1a"/>
-    <rect x="2"  y="2" width="1"  height="1" fill="#1a1a1a"/>
-    <rect x="14" y="2" width="1"  height="1" fill="#1a1a1a"/>
-    <rect x="2"  y="3" width="1"  height="1" fill="#1a1a1a"/>
-    <rect x="3"  y="3" width="10" height="1" fill="#bc8c4b"/>
-    <rect x="13" y="3" width="1"  height="1" fill="#1a1a1a"/>
-    <rect x="3"  y="4" width="1"  height="1" fill="#1a1a1a"/>
-    <rect x="4"  y="4" width="8"  height="1" fill="#bc8c4b"/>
-    <rect x="12" y="4" width="1"  height="1" fill="#1a1a1a"/>
-    <rect x="4"  y="5" width="1"  height="1" fill="#1a1a1a"/>
-    <rect x="5"  y="5" width="6"  height="1" fill="#bc8c4b"/>
-    <rect x="11" y="5" width="1"  height="1" fill="#1a1a1a"/>
-    <rect x="5"  y="6" width="1"  height="1" fill="#1a1a1a"/>
-    <rect x="6"  y="6" width="4"  height="1" fill="#bc8c4b"/>
-    <rect x="10" y="6" width="1"  height="1" fill="#1a1a1a"/>
-    <rect x="6"  y="7" width="1"  height="1" fill="#1a1a1a"/>
-    <rect x="7"  y="7" width="2"  height="1" fill="#bc8c4b"/>
-    <rect x="9"  y="7" width="1"  height="1" fill="#1a1a1a"/>
-    <rect x="7"  y="8" width="2"  height="1" fill="#1a1a1a"/>
-    <!-- Stem -->
-    <rect x="7"  y="9"  width="2" height="1" fill="#1a1a1a"/>
-    <rect x="7"  y="10" width="2" height="1" fill="#1a1a1a"/>
-    <rect x="7"  y="11" width="2" height="1" fill="#1a1a1a"/>
-    <!-- Base -->
-    <rect x="6"  y="12" width="4" height="1" fill="#1a1a1a"/>
-    <rect x="5"  y="13" width="6" height="1" fill="#1a1a1a"/>
-    <rect x="4"  y="14" width="8" height="1" fill="#1a1a1a"/>
-  </svg>
-  <h1 class="title">SLIDE TACKLED</h1>
-  <div class="rule"></div>
-  <p class="tagline">a toast generator</p>
-  <div class="corner-r">press <b>POUR</b></div>
+  <div class="window">
+    <div class="titlebar">
+      <img class="tb-bubble" src="/Users/bignick/slidetackled/public/brand/bubble.png" alt="">
+      <span>slidetackled — Instant Message</span>
+      <span class="tb-ctrls">
+        <span class="tb-btn">_</span>
+        <span class="tb-btn">□</span>
+        <span class="tb-btn tb-close">×</span>
+      </span>
+    </div>
+    <div class="body">
+      <img class="bubble-big" src="/Users/bignick/slidetackled/public/brand/bubble.png" alt="">
+      <div class="right">
+        <img class="wordmark" src="/Users/bignick/slidetackled/public/brand/wordmark.png" alt="slidetackled">
+        <div class="tag">a toast generator.</div>
+        <div class="yellow-strip">press BUZZ. raise your glass. read it aloud.</div>
+      </div>
+    </div>
+  </div>
 </body>
 </html>

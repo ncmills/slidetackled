@@ -1,5 +1,6 @@
 #!/usr/bin/env node
-// Rank archive entries by live vote score. Use to pick new capstone candidates.
+// Rank archive entries by live vote score (up − down). Handy editorial tool —
+// eyeball the winners to decide which toasts are landing. No write-back.
 //
 // Usage:
 //   node scripts/promote.js              # top 20 by net score
