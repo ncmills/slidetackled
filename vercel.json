@@ -1,6 +1,14 @@
 {
   "cleanUrls": true,
   "trailingSlash": false,
+  "redirects": [
+    {
+      "source": "/:path*",
+      "has": [{ "type": "host", "value": "www.slidetackled.com" }],
+      "destination": "https://slidetackled.com/:path*",
+      "permanent": true
+    }
+  ],
   "rewrites": [
     { "source": "/yell", "destination": "/index.html" },
     { "source": "/cli", "destination": "/index.html" },
