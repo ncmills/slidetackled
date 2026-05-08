@@ -3,9 +3,9 @@
   "trailingSlash": false,
   "redirects": [
     {
-      "source": "/:path*",
+      "source": "/(.*)",
       "has": [{ "type": "host", "value": "www.slidetackled.com" }],
-      "destination": "https://slidetackled.com/:path*",
+      "destination": "https://slidetackled.com/$1",
       "permanent": true
     }
   ],
