@@ -10,10 +10,10 @@
     }
   ],
   "rewrites": [
-    { "source": "/yell", "destination": "/index.html" },
-    { "source": "/cli", "destination": "/index.html" },
-    { "source": "/marquee", "destination": "/index.html" },
-    { "source": "/away", "destination": "/index.html" }
+    { "source": "/yell", "destination": "/" },
+    { "source": "/cli", "destination": "/" },
+    { "source": "/marquee", "destination": "/" },
+    { "source": "/away", "destination": "/" }
   ],
   "headers": [
     {
