@@ -4,29 +4,55 @@
   "redirects": [
     {
       "source": "/(.*)",
-      "has": [{ "type": "host", "value": "www.slidetackled.com" }],
+      "has": [
+        {
+          "type": "host",
+          "value": "www.slidetackled.com"
+        }
+      ],
       "destination": "https://slidetackled.com/$1",
       "permanent": true
     }
   ],
   "rewrites": [
-    { "source": "/yell", "destination": "/" },
-    { "source": "/cli", "destination": "/" },
-    { "source": "/marquee", "destination": "/" },
-    { "source": "/away", "destination": "/" }
+    {
+      "source": "/yell",
+      "destination": "/"
+    },
+    {
+      "source": "/cli",
+      "destination": "/"
+    },
+    {
+      "source": "/marquee",
+      "destination": "/"
+    },
+    {
+      "source": "/away",
+      "destination": "/"
+    }
   ],
   "headers": [
     {
       "source": "/audio/(.*)",
       "headers": [
-        { "key": "Cache-Control", "value": "public, max-age=31536000, immutable" }
+        {
+          "key": "Cache-Control",
+          "value": "public, max-age=31536000, immutable"
+        }
       ]
     },
     {
       "source": "/(toasts|capstone|config).json",
       "headers": [
-        { "key": "Cache-Control", "value": "public, max-age=0, must-revalidate" }
+        {
+          "key": "Cache-Control",
+          "value": "public, max-age=0, must-revalidate"
+        }
       ]
     }
-  ]
+  ],
+  "github": {
+    "silent": true
+  }
 }
